@@ -24,7 +24,7 @@ namespace QKP.EzId.Json
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, EzId value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.StringValue);
+            writer.WriteStringValue(value.Value);
         }
     }
 }

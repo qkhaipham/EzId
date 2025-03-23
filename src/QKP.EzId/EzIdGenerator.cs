@@ -5,7 +5,7 @@ namespace QKP.EzId
     /// <summary>
     /// Generates identifiers of type <see cref="EzId"/>.
     /// </summary>
-    public class EzIdGenerator<T> where T : EzId
+    public class EzIdGenerator<T>
     {
         private readonly IdGenerator _generator;
 

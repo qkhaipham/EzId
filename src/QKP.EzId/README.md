@@ -1,5 +1,5 @@
 EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look like `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake
-and comes packed with a value type that encodes it in a 15-character base32 string.
+and comes packed with a readonly struct that encodes it in a 15-character base32 string.
 
 ## Usage example ###
 
@@ -13,22 +13,8 @@ var generator = new EzIdGenerator<EzId>(generatorId: 1);
 EzId id = generator.GetNextId();
 
 // Convert to string
-string idString = id.ToString(); // Returns a 13-character base32 string, eg. "070-47XF6Q8-YPA"
+string idString = id.ToString(); // Returns a 15-character base32 string, eg. "070-47XF6Q8-YPA"
 
 // Parse from string
 EzId parsedId = EzId.Parse(idString);
-
-// Implement your own ID type, if you have multiple entities and want them to have own ID type
-public class FooId(long id) : EzId(id)
-{
-}
-
-// Create an FooIdGenerator with a unique generator ID (0-1023)
-var fooGenerator = new EzIdGenerator<FooId>(generatorId: 1);
-
-// Generate a new ID
-FooId fooId = fooGenerator.GetNextId();
-
-// Convert to string
-string fooIdString = fooId.ToString(); // Returns a 13-character base 32 string eg. "070-47XF6Q8-YPB"
 ```

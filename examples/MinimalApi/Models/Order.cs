@@ -1,3 +1,5 @@
+using QKP.EzId;
+
 namespace MinimalApi.Models;
 
-public record Order(OrderId OrderId, string CustomerName, decimal TotalPrice);
+public record Order(EzId OrderId, string CustomerName, decimal TotalPrice);

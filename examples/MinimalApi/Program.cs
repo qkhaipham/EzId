@@ -52,7 +52,7 @@ app.MapPost("/order", (
         [FromBody]
         CreateOrder createOrder) =>
     {
-        var id = new EzIdGenerator<OrderId>(GetGeneratorId()).GetNextId();
+        var id = new EzIdGenerator<EzId>(GetGeneratorId()).GetNextId();
         var order = new Order(id, createOrder.CustomerName, createOrder.TotalPrice);
         return Results.Created((string?)null, id);
     })
@@ -60,7 +60,7 @@ app.MapPost("/order", (
 
 app.MapGet("/order/{id}", (
         [FromRoute]
-        OrderId id
+        EzId id
     ) =>
     {
         var order = new Order(id, "John Doe", 100);

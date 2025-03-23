@@ -15,9 +15,8 @@ namespace QKP.EzId.Tests
         {
             var ezId = new EzId(value);
 
-            ezId.Value.Should().Be(value);
             ezId.ToString().Should().Be(expected);
-            ezId.StringValue.Should().Be(expected);
+            ezId.Value.Should().Be(expected);
         }
 
         [Fact]
@@ -41,8 +40,10 @@ namespace QKP.EzId.Tests
         public void Given_valid_string_when_parsing_it_must_return_expected_value(string input, long expected)
         {
             var ezId = EzId.Parse(input);
+            var expectedEzId = new EzId(expected);
 
-            ezId.Value.Should().Be(expected);
+            ezId.Should().Be(expectedEzId);
+            ezId.Value.Should().Be(input);
         }
 
         [Theory]
@@ -79,7 +80,7 @@ namespace QKP.EzId.Tests
         [InlineData("000-0000000-0000")] // Too long
         [InlineData("UUU-UUUUUUU-UUU")] // Invalid characters
         [InlineData(null)] // Null string
-        public void Given_invalid_string_when_using_tryparse_it_must_return_false_and_error_id(string invalidInput)
+        public void Given_invalid_string_when_using_tryparse_it_must_return_false_and_error_id(string? invalidInput)
         {
             bool success = EzId.TryParse(invalidInput, null, out var result);
 
@@ -140,6 +141,7 @@ namespace QKP.EzId.Tests
             var ezId = new EzId(12345);
             var differentType = "12345";
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
             ezId.Equals(differentType).Should().BeFalse();
         }
 
@@ -149,7 +151,9 @@ namespace QKP.EzId.Tests
             var ezId = new EzId(12345);
 
             ezId.Equals(ezId).Should().BeTrue();
+            // ReSharper disable once EqualExpressionComparison
             (ezId == ezId).Should().BeTrue();
+            // ReSharper disable once EqualExpressionComparison
             (ezId != ezId).Should().BeFalse();
         }
     }
