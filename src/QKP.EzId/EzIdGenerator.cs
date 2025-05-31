@@ -3,9 +3,10 @@ using System;
 namespace QKP.EzId
 {
     /// <summary>
-    /// Generates identifiers of type <see cref="EzId"/>.
+    /// Generates identifiers of type <typeparamref name="T"/>.
     /// </summary>
-    public class EzIdGenerator<T>
+    /// <typeparam name="T">The ID type, which must implement IEzIdType<T>.</typeparam>
+    public class EzIdGenerator<T> where T : IEzIdType<T>
     {
         private readonly IdGenerator _generator;
 

@@ -1,7 +1,6 @@
 # EzId
 
-EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look for example like: `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake
-and comes packed with a readonly struct that encodes it in a 15-character base32 string.
+EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look for example like: `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake and comes packed with a readonly struct that encodes it in a 15-character base32 string.
 
 ---
 
@@ -30,6 +29,11 @@ and comes packed with a readonly struct that encodes it in a 15-character base32
 dotnet add package QKP.EzId
 ```
 
+For source generation support (recommended):
+```bash
+dotnet add package QKP.EzId.SourceGenerator
+```
+
 ## Usage
 
 ### Basic Usage
@@ -48,6 +52,62 @@ string idString = id.ToString(); // Returns a 15-character base32 string eg. "07
 
 // Parse from string
 EzId parsedId = EzId.Parse(idString);
+```
+
+### Source Generated ID Types
+
+You can create your own strongly-typed IDs using the source generator:
+
+```csharp
+using QKP.EzId;
+
+// Define a custom ID type
+[EzIdType] // Default: dash separators at positions [3, 10]
+public partial struct ProductId { }
+
+// Use it just like the base EzId
+var generator = new EzIdGenerator<ProductId>(generatorId: 1);
+ProductId id = generator.GetNextId();
+string idString = id.ToString(); // Returns e.g. "070-47XF6Q8-YPA"
+ProductId parsedId = ProductId.Parse(idString);
+```
+
+#### Customization Options
+
+The `EzIdType` attribute supports the following options:
+
+- `Separator`: The type of separator to use (None, Dash, or Underscore)
+- `SeparatorPositions`: Array of positions where separators should appear (0-12)
+
+Examples:
+
+```csharp
+// Default format (XXX-XXXXXXX-XXX)
+[EzIdType]
+public partial struct OrderId { }
+
+// Custom separator positions (XXXX-XXXX-XXXXXXX)
+[EzIdType(Separator.Dash, [4, 8])]
+public partial struct ProductId { }
+
+// No separators (XXXXXXXXXXXXXX)
+[EzIdType(Separator.None, [])]
+public partial struct UserId { }
+
+// Underscore separators (XXX_XXXXXXX_XXX)
+[EzIdType(Separator.Underscore, [3, 10])]
+public partial struct SessionId { }
+```
+
+#### JSON Serialization
+
+Source generated ID types automatically include JSON converters for System.Text.Json:
+
+```csharp
+// System.Text.Json
+var product = new Product { Id = productId, Name = "Example" };
+string json = JsonSerializer.Serialize(product);
+var deserializedProduct = JsonSerializer.Deserialize<Product>(json);
 ```
 
 ### Important: Generator ID
@@ -72,7 +132,7 @@ var node2Generator = new EzIdGenerator<EzId>(generatorId: 2);  // For Node 2
 ### ID Structure
 
 Each generated ID consists of:
-- 1 bit unused 
+- 1 bit unused
 - 41 bits for timestamp (milliseconds since epoch)
 - 10 bits for generator ID (0-1023)
 - 12 bits for sequence number (0-4095)

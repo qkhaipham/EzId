@@ -1,9 +1,7 @@
-﻿﻿using System;
-using System.Globalization;
+﻿using System;
 using System.Linq;
 using System.Text;
 #if NET7_0_OR_GREATER
-using System.Numerics;
 #endif
 
 namespace QKP.EzId
@@ -16,24 +14,29 @@ namespace QKP.EzId
     /// 070-47XF6Q8-YPA
     /// </example>
     /// </summary>
+
+    public readonly struct EzId :
 #if NET7_0_OR_GREATER
-    public readonly struct EzId : IEquatable<EzId>, IParsable<EzId>
-#else
-    public readonly struct EzId : IEquatable<EzId>
+        IParsable<EzId>,
+        ISpanParsable<EzId>,
 #endif
+        IEquatable<EzId>,
+        IComparable<EzId>,
+        IEzIdType<EzId>
     {
+
         /// <summary>
         /// Gets the base32 encoded string representation of the identifier.
         /// </summary>
         public string Value { get; }
 
+        private const char Separator = '-';
+        private static readonly int[] s_separatorPositions = new[] { 3, 10 };
+        private static readonly int s_length = 13 + s_separatorPositions.Length; // Base length (13) + number of separators
         /// <summary>
         /// Gets a default error ID value.
         /// </summary>
         public static readonly EzId ErrorId = new EzId(0);
-
-        private const char Separator = '-';
-        private const int Length = 15;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EzId"/> struct.
@@ -59,9 +62,9 @@ namespace QKP.EzId
         /// <returns>The parsed <see cref="EzId"/> value.</returns>
         public static EzId Parse(string s, IFormatProvider? provider)
         {
-            if (s.Length != Length)
+            if (s.Length != s_length)
             {
-                throw new ArgumentOutOfRangeException(nameof(s), $"Value must have a length equal to {Length}.");
+                throw new ArgumentOutOfRangeException(nameof(s), $"Value must have a length equal to {s_length}.");
             }
 
             string encodedValue = s.Replace(Separator.ToString(), string.Empty);
@@ -115,6 +118,9 @@ namespace QKP.EzId
         {
             return Value;
         }
+
+        /// <inheritdoc />
+        public int CompareTo(EzId other) => string.Compare(Value, other.Value, StringComparison.Ordinal);
 
         /// <inheritdoc />
         public override bool Equals(object? obj)
@@ -219,15 +225,28 @@ namespace QKP.EzId
         private static string Format(string encodedValue)
         {
             var sb = new StringBuilder();
+            int currentSeparatorIndex = 0;
+
             for (int i = 0; i < encodedValue.Length; i++)
             {
-                if (i is 3 || i is 10)
+                if (currentSeparatorIndex < s_separatorPositions.Length &&
+                    i == s_separatorPositions[currentSeparatorIndex])
                 {
                     sb.Append(Separator);
+                    currentSeparatorIndex++;
                 }
                 sb.Append(encodedValue[i]);
             }
             return sb.ToString();
         }
+
+#if NET7_0_OR_GREATER
+        /// <inheritdoc />
+        public static EzId Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s.ToString(), provider);
+
+        /// <inheritdoc />
+        public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out EzId result) =>
+            TryParse(s.ToString(), out result);
+#endif
     }
 }

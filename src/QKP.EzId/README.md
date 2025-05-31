@@ -1,8 +1,19 @@
-EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look like `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake
-and comes packed with a readonly struct that encodes it in a 15-character base32 string.
+EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look like `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake and comes packed with a readonly struct that encodes it in a 15-character base32 string.
 
-## Usage example ###
+## Installation
 
+```shell
+dotnet add package QKP.EzId
+```
+
+For source generation support (recommended):
+```shell
+dotnet add package QKP.EzId.SourceGenerator
+```
+
+## Usage
+
+### Runtime ID Generation
 ```csharp
 using QKP.EzId;
 
@@ -17,4 +28,32 @@ string idString = id.ToString(); // Returns a 15-character base32 string, eg. "0
 
 // Parse from string
 EzId parsedId = EzId.Parse(idString);
+```
+
+### Source Generated IDs (Recommended)
+```csharp
+using QKP.EzId;
+
+// Define your custom ID types with optional separator configuration
+[EzId(Separator.Dash, new[] { 3, 10 })] // Default format: XXX-XXXXXXX-XXX
+public partial struct OrderId { }
+
+// Or use default dash separators at positions [3, 10]
+[EzId]
+public partial struct ProductId { }
+
+// Or create IDs without separators
+[EzId(Separator.None)]
+public partial struct UserId { }
+
+// Create generators with unique IDs for each type
+var orderGenerator = new EzIdGenerator<OrderId>(generatorId: 1);
+var productGenerator = new EzIdGenerator<ProductId>(generatorId: 2);
+var userGenerator = new EzIdGenerator<UserId>(generatorId: 3);
+
+// Generate IDs
+var orderId = orderGenerator.GetNextId();       // "070-47XF6Q8-YPA"
+var productId = productGenerator.GetNextId();   // "070-47XF6Q8-YPA"
+var userId = userGenerator.GetNextId();         // "07047XF6Q8YPA"
+
 ```

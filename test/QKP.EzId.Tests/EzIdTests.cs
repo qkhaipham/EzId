@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using System;
 
 namespace QKP.EzId.Tests
 {

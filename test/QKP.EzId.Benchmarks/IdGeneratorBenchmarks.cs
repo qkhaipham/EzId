@@ -7,7 +7,7 @@ namespace QKP.EzId.Benchmarks;
 [MemoryDiagnoser]
 public class IdGeneratorBenchmarks
 {
-    private IdGenerator _idGenerator;
+    private IdGenerator _idGenerator = null!;
 
     [GlobalSetup]
     public void Setup()
