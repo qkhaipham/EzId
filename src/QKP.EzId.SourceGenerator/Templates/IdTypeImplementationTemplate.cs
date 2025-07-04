@@ -1,7 +1,11 @@
 namespace QKP.EzId.SourceGenerator;
 
-public static partial class Templates
+
+internal static partial class Templates
 {
+    /// <summary>
+    /// Gets the IdTypeImplemenationTemplate.
+    /// </summary>
     public static string IdTypeImplementationTemplate =>
         """
         using System;

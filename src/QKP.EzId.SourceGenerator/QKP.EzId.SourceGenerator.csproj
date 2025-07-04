@@ -32,11 +32,6 @@
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Templates\*.template">
-      <LogicalName>QKP.EzId.SourceGenerator.Templates.%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QKP.EzId\QKP.EzId.csproj" />

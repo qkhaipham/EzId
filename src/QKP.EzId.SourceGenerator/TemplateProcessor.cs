@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace QKP.EzId.SourceGenerator
 {
     /// <summary>

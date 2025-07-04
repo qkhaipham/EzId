@@ -87,21 +87,21 @@ Examples:
 public partial struct OrderId { }
 
 // Custom separator positions (XXXX-XXXX-XXXXXXX)
-[EzIdType(Separator.Dash, [4, 8])]
+[EzIdType(SeparatorOptions.Dash, [4, 8])]
 public partial struct ProductId { }
 
 // No separators (XXXXXXXXXXXXXX)
-[EzIdType(Separator.None, [])]
+[EzIdType(SeparatorOptions.None, [])]
 public partial struct UserId { }
 
 // Underscore separators (XXX_XXXXXXX_XXX)
-[EzIdType(Separator.Underscore, [3, 10])]
+[EzIdType(SeparatorOptions.Underscore, [3, 10])]
 public partial struct SessionId { }
 ```
 
 #### JSON Serialization
 
-Source generated ID types automatically include JSON converters for System.Text.Json:
+Source generated ID types automatically include JSON converters for System.Text.Json and Newtonsoft.Json:
 
 ```csharp
 // System.Text.Json

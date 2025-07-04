@@ -35,7 +35,7 @@ EzId parsedId = EzId.Parse(idString);
 using QKP.EzId;
 
 // Define your custom ID types with optional separator configuration
-[EzId(Separator.Dash, new[] { 3, 10 })] // Default format: XXX-XXXXXXX-XXX
+[EzId(SeparatorOptions.Dash, [3, 10]) // Default format: XXX-XXXXXXX-XXX
 public partial struct OrderId { }
 
 // Or use default dash separators at positions [3, 10]
@@ -43,17 +43,22 @@ public partial struct OrderId { }
 public partial struct ProductId { }
 
 // Or create IDs without separators
-[EzId(Separator.None)]
+[EzId(SeparatorOptions.None, [])]
 public partial struct UserId { }
+
+[EzId(SeparatorOptions.Underscore, [3, 10]) // Default format: XXX-XXXXXXX-XXX
+public partial struct PriceId { }
 
 // Create generators with unique IDs for each type
 var orderGenerator = new EzIdGenerator<OrderId>(generatorId: 1);
 var productGenerator = new EzIdGenerator<ProductId>(generatorId: 2);
 var userGenerator = new EzIdGenerator<UserId>(generatorId: 3);
+var priceGenerator = new EzIdGenerator<PriceId>(generatorId: 3);
 
 // Generate IDs
 var orderId = orderGenerator.GetNextId();       // "070-47XF6Q8-YPA"
 var productId = productGenerator.GetNextId();   // "070-47XF6Q8-YPA"
 var userId = userGenerator.GetNextId();         // "07047XF6Q8YPA"
+var priceId = priceGenerator.GetNextId();         // "070_47XF6Q8_YPA"
 
 ```

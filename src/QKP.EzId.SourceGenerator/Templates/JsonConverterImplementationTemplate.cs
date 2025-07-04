@@ -1,6 +1,6 @@
 namespace QKP.EzId.SourceGenerator;
 
-public static partial class Templates
+internal static partial class Templates
 {
     public static string JsonConverterImplementationTemplate =>
         """
