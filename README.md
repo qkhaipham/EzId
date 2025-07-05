@@ -8,9 +8,10 @@ EzId is a lightweight .NET library for generating unique, sortable, and human-fr
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qkhaipham_EzId&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qkhaipham_EzId)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=qkhaipham_EzId&metric=coverage)](https://sonarcloud.io/component_measures?id=qkhaipham_EzId&metric=coverage)
 
-| | |
-|---|---|
-| `QKP.EzId` | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/) |
+|                            |                                                                                                                                                                                                                                                      |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `QKP.EzId`                 | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/)                                                 |
+| `QKP.EzId.SourceGenerator` | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId/) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId.SourceGenerator/) |
 
 ## Features
 

@@ -18,23 +18,22 @@ internal static partial class Templates
         {
             [System.Diagnostics.DebuggerDisplay("{Value}")]
             public readonly partial struct {TypeName} :
+                #if NET7_0_OR_GREATER
+                    ISpanParsable<{TypeName}>,
+                #endif
                     IEquatable<{TypeName}>,
                     IComparable<{TypeName}>,
                     IEzIdType<{TypeName}>,
-            #if NET7_0_OR_GREATER
-                    IParsable<{TypeName}>,
-                    ISpanParsable<{TypeName}>
-            #endif
+                    IConvertible
             {
-                private const char Separator = '{Separator}';
-                private static readonly int[] s_separatorPositions = {SeparatorPositions}
-                private const int s_length = {Length};
-
-
                 /// <summary>
-                /// Gets the string representation of the identifier.
+                /// Gets the base32 encoded string representation of the identifier.
                 /// </summary>
                 public string Value { get; }
+
+                private const char Separator = '{Separator}';
+                private static readonly int[] s_separatorPositions = {SeparatorPositions}
+                private static readonly int s_length = {Length};
 
                 /// <summary>
                 /// Gets a default error ID value.
@@ -177,11 +176,11 @@ internal static partial class Templates
                 }
 
                 /// <summary>
-                /// Determines whether a {TypeName} and a null reference have different values.
+                /// Determines whether a {TypeName} and a null reference have the same value.
                 /// </summary>
                 /// <param name="left">The null reference to compare.</param>
                 /// <param name="right">The {TypeName} to compare.</param>
-                /// <returns>Always true since a {TypeName} value type can never equal null.</returns>
+                /// <returns>Always false since a {TypeName} value type can never equal null.</returns>
                 public static bool operator ==({TypeName}? left, {TypeName} right)
                 {
                     return left.HasValue && left.Value.Equals(right);
@@ -225,6 +224,38 @@ internal static partial class Templates
                 /// <returns>true if one is null and the other is not, or if both have values and those values are not equal; otherwise, false.</returns>
                 public static bool operator !=({TypeName}? left, {TypeName}? right) => !Equals(left, right);
 
+                /// <summary>
+                /// Determines whether one {TypeName} is greater than another.
+                /// </summary>
+                public static bool operator >({TypeName} left, {TypeName} right)
+                {
+                    return left.CompareTo(right) > 0;
+                }
+
+                /// <summary>
+                /// Determines whether one {TypeName} is less than another.
+                /// </summary>
+                public static bool operator <({TypeName} left, {TypeName} right)
+                {
+                    return left.CompareTo(right) < 0;
+                }
+
+                /// <summary>
+                /// Determines whether one {TypeName} is greater than or equal to another.
+                /// </summary>
+                public static bool operator >=({TypeName} left, {TypeName} right)
+                {
+                    return left.CompareTo(right) >= 0;
+                }
+
+                /// <summary>
+                /// Determines whether one {TypeName} is less than or equal to another.
+                /// </summary>
+                public static bool operator <=({TypeName} left, {TypeName} right)
+                {
+                    return left.CompareTo(right) <= 0;
+                }
+
                 private static string Format(string encodedValue)
                 {
                     var sb = new StringBuilder();
@@ -251,6 +282,73 @@ internal static partial class Templates
                 public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out {TypeName} result) =>
                     TryParse(s.ToString(), out result);
         #endif
+
+                /// <inheritdoc />
+                public TypeCode GetTypeCode() => TypeCode.Object;
+
+                /// <inheritdoc />
+                public bool ToBoolean(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public byte ToByte(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public char ToChar(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public DateTime ToDateTime(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public decimal ToDecimal(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public double ToDouble(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public short ToInt16(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public int ToInt32(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public long ToInt64(IFormatProvider? provider) => throw new InvalidCastException();
+                
+                /// <inheritdoc />
+                public sbyte ToSByte(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public float ToSingle(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public string ToString(IFormatProvider? provider) => ToString();
+
+                /// <inheritdoc />
+                public object ToType(Type conversionType, IFormatProvider? provider)
+                {
+                    var code = Type.GetTypeCode(conversionType);
+                    switch (code)
+                    {
+                        case TypeCode.Object:
+                            if (conversionType == typeof(object) || conversionType == typeof({TypeName}))
+                            {
+                                return this;
+                            }
+                            break;
+                        case TypeCode.String:
+                            return ToString(provider);
+                    }
+
+                    throw new InvalidCastException();
+                }
+
+                /// <inheritdoc />
+                public ushort ToUInt16(IFormatProvider? provider) => throw new InvalidCastException();
+
+                /// <inheritdoc />
+                public uint ToUInt32(IFormatProvider? provider) => throw new NotImplementedException();
+
+                /// <inheritdoc />
+                public ulong ToUInt64(IFormatProvider? provider) => throw new NotImplementedException();
             }
         }
         """;

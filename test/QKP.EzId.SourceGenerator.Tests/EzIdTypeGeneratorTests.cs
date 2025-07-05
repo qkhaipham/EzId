@@ -36,7 +36,7 @@ namespace QKP.EzId.SourceGenerator.Tests
             idTypeContent.Should().Contain("public readonly partial struct TestId :");
             idTypeContent.Should().Contain("private const char Separator = '-'");
             idTypeContent.Should().Contain("private static readonly int[] s_separatorPositions");
-            idTypeContent.Should().Contain("private const int s_length");
+            idTypeContent.Should().Contain("private static readonly int s_length");
             idTypeContent.Should().Contain("public string Value { get; }");
             idTypeContent.Should().Contain("public static readonly TestId ErrorId");
             idTypeContent.Should().Contain("public static TestId Parse(");

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Globalization;
+using FluentAssertions;
 
 namespace QKP.EzId.Tests
 {
@@ -14,7 +15,7 @@ namespace QKP.EzId.Tests
         {
             var ezId = new EzId(value);
 
-            ezId.ToString().Should().Be(expected);
+            ezId.ToString(CultureInfo.InvariantCulture).Should().Be(expected);
             ezId.Value.Should().Be(expected);
         }
 
@@ -22,7 +23,7 @@ namespace QKP.EzId.Tests
         public void Given_ezid_when_converting_to_string_and_parsing_back_it_must_return_equivalent_ezid()
         {
             var originalEzId = new EzId(124567890);
-            string strVal = originalEzId.ToString();
+            string strVal = originalEzId.ToString(CultureInfo.InvariantCulture);
 
             var parsedEzId = EzId.Parse(strVal);
 
@@ -63,7 +64,7 @@ namespace QKP.EzId.Tests
         public void Given_valid_string_when_using_tryparse_it_must_return_true_and_correct_ezid()
         {
             var originalEzId = new EzId(124567890);
-            string strVal = originalEzId.ToString();
+            string strVal = originalEzId.ToString(CultureInfo.InvariantCulture);
 
             bool success = EzId.TryParse(strVal, null, out var parsedEzId);
 
@@ -154,6 +155,53 @@ namespace QKP.EzId.Tests
             (ezId == ezId).Should().BeTrue();
             // ReSharper disable once EqualExpressionComparison
             (ezId != ezId).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Given_ezid_when_casting_to_iconvertible_invalid_casts_throw()
+        {
+            var ezId = new EzId(12345);
+
+            Action boolCast = () => ezId.ToBoolean(null);
+            Action byteCast = () => ezId.ToByte(null);
+            Action charCast = () => ezId.ToChar(null);
+            Action dateTimeCast = () => ezId.ToDateTime(null);
+            Action decimalCast = () => ezId.ToDecimal(null);
+            Action doubleCast = () => ezId.ToDouble(null);
+            Action int16Cast = () => ezId.ToInt16(null);
+            Action int32Cast = () => ezId.ToInt32(null);
+            Action int64Cast = () => ezId.ToInt64(null);
+            Action sbyteCast = () => ezId.ToSByte(null);
+            Action singleCast = () => ezId.ToSingle(null);
+            Action uint16Cast = () => ezId.ToUInt16(null);
+
+            boolCast.Should().Throw<InvalidCastException>();
+            byteCast.Should().Throw<InvalidCastException>();
+            charCast.Should().Throw<InvalidCastException>();
+            dateTimeCast.Should().Throw<InvalidCastException>();
+            decimalCast.Should().Throw<InvalidCastException>();
+            doubleCast.Should().Throw<InvalidCastException>();
+            int16Cast.Should().Throw<InvalidCastException>();
+            int32Cast.Should().Throw<InvalidCastException>();
+            int64Cast.Should().Throw<InvalidCastException>();
+            sbyteCast.Should().Throw<InvalidCastException>();
+            singleCast.Should().Throw<InvalidCastException>();
+            uint16Cast.Should().Throw<InvalidCastException>();
+        }
+
+        [Fact]
+        public void Given_ezid_when_casting_to_iconvertible_valid_casts_succeed()
+        {
+            var ezId = new EzId(12345);
+
+            ezId.GetTypeCode().Should().Be(TypeCode.Object);
+            ezId.ToString(null).Should().Be(ezId.ToString(CultureInfo.InvariantCulture));
+            ezId.ToType(typeof(string), null).Should().Be(ezId.ToString(CultureInfo.InvariantCulture));
+            ezId.ToType(typeof(EzId), null).Should().Be(ezId);
+            ezId.ToType(typeof(object), null).Should().Be(ezId);
+
+            Action invalidType = () => ezId.ToType(typeof(int), null);
+            invalidType.Should().Throw<InvalidCastException>();
         }
     }
 }

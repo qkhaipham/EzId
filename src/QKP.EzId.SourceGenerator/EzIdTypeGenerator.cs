@@ -43,7 +43,7 @@ namespace QKP.EzId.SourceGenerator
             }
         }
 
-        private void ProcessStruct(GeneratorExecutionContext context, StructDeclarationSyntax structDeclaration)
+        private static void ProcessStruct(GeneratorExecutionContext context, StructDeclarationSyntax structDeclaration)
         {
             // Get the semantic model for the struct
             var semanticModel = context.Compilation.GetSemanticModel(structDeclaration.SyntaxTree);
@@ -168,7 +168,7 @@ namespace QKP.EzId.SourceGenerator
         /// <summary>
         /// Syntax receiver that finds struct declarations with the EzIdType attribute.
         /// </summary>
-        private class SyntaxReceiver : ISyntaxContextReceiver
+        private sealed class SyntaxReceiver : ISyntaxContextReceiver
         {
             public List<StructDeclarationSyntax> CandidateStructs { get; } = [];
 
@@ -225,7 +225,6 @@ namespace QKP.EzId.SourceGenerator
                 return "Array.Empty<int>();";
             }
 
-            //new[] { 3, 10 };
             var sb = new StringBuilder();
             sb.Append("new [] ");
             sb.Append("{");
