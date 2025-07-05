@@ -17,12 +17,12 @@ namespace QKP.EzId
 
     public readonly struct EzId :
 #if NET7_0_OR_GREATER
-        IParsable<EzId>,
         ISpanParsable<EzId>,
 #endif
         IEquatable<EzId>,
         IComparable<EzId>,
-        IEzIdType<EzId>
+        IEzIdType<EzId>,
+        IConvertible
     {
 
         /// <summary>
@@ -162,6 +162,7 @@ namespace QKP.EzId
             return !left.Equals(right);
         }
 
+
         /// <summary>
         /// Determines whether an EzId and a null reference have the same value.
         /// </summary>
@@ -221,6 +222,37 @@ namespace QKP.EzId
         /// <param name="right">The second nullable EzId to compare.</param>
         /// <returns>true if one is null and the other is not, or if both have values and those values are not equal; otherwise, false.</returns>
         public static bool operator !=(EzId? left, EzId? right) => !Equals(left, right);
+        /// <summary>
+        /// Determines whether one EzId is greater than another.
+        /// </summary>
+        public static bool operator >(EzId left, EzId right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        /// <summary>
+        /// Determines whether one EzId is less than another.
+        /// </summary>
+        public static bool operator <(EzId left, EzId right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        /// <summary>
+        /// Determines whether one EzId is greater than or equal to another.
+        /// </summary>
+        public static bool operator >=(EzId left, EzId right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
+
+        /// <summary>
+        /// Determines whether one EzId is less than or equal to another.
+        /// </summary>
+        public static bool operator <=(EzId left, EzId right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
 
         private static string Format(string encodedValue)
         {
@@ -248,5 +280,71 @@ namespace QKP.EzId
         public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out EzId result) =>
             TryParse(s.ToString(), out result);
 #endif
+        /// <inheritdoc />
+        public TypeCode GetTypeCode() => TypeCode.Object;
+
+        /// <inheritdoc />
+        public bool ToBoolean(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public byte ToByte(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public char ToChar(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public DateTime ToDateTime(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public decimal ToDecimal(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public double ToDouble(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public short ToInt16(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public int ToInt32(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public long ToInt64(IFormatProvider? provider) => throw new InvalidCastException();
+        
+        /// <inheritdoc />
+        public sbyte ToSByte(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public float ToSingle(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public string ToString(IFormatProvider? provider) => ToString();
+
+        /// <inheritdoc />
+        public object ToType(Type conversionType, IFormatProvider? provider)
+        {
+            var code = Type.GetTypeCode(conversionType);
+            switch (code)
+            {
+                case TypeCode.Object:
+                    if (conversionType == typeof(object) || conversionType == typeof(EzId))
+                    {
+                        return this;
+                    }
+                    break;
+                case TypeCode.String:
+                    return ToString(provider);
+            }
+
+            throw new InvalidCastException();
+        }
+
+        /// <inheritdoc />
+        public ushort ToUInt16(IFormatProvider? provider) => throw new InvalidCastException();
+
+        /// <inheritdoc />
+        public uint ToUInt32(IFormatProvider? provider) => throw new NotImplementedException();
+
+        /// <inheritdoc />
+        public ulong ToUInt64(IFormatProvider? provider) => throw new NotImplementedException();
     }
 }

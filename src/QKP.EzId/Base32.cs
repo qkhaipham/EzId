@@ -51,7 +51,7 @@ namespace QKP.EzId
                 }
             }
 
-            if (bufferLength <= 0) return sb.ToString();
+            if (bufferLength > 0)
             {
                 int index = (buffer << (base32Bits - bufferLength)) & 0x1F;
                 sb.Append(Alphabet.Characters[index]);

@@ -27,7 +27,7 @@ namespace QKP.EzId.SourceGenerator.Tests
             result.Should().Contain("public readonly partial struct TestId");
             result.Should().Contain("private const char Separator = '-';");
             result.Should().Contain("private static readonly int[] s_separatorPositions = new[] { 4, 8 };");
-            result.Should().Contain("private const int s_length = 13;");
+            result.Should().Contain("private static readonly int s_length = 13;");
         }
 
         [Theory]

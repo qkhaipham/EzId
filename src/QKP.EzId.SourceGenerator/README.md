@@ -31,15 +31,15 @@ dotnet add package QKP.EzId.SourceGenerator
 public partial struct OrderId { }
 
 // Custom separator positions
-[EzIdType(Separator.Dash, new[] { 4, 8 })] // XXXX-XXXX-XXXXXXX
+[EzIdType(SeparatorOptions.Dash, new[] { 4, 8 })] // XXXX-XXXX-XXXXXXX
 public partial struct ProductId { }
 
 // No separators
-[EzIdType(Separator.None)]
+[EzIdType(SeparatorOptions.None)]
 public partial struct UserId { } // XXXXXXXXXXXXXX
 
 // Underscore separators
-[EzIdType(Separator.Underscore, new[] { 3, 10 })] // XXX_XXXXXXX_XXX
+[EzIdType(SeparatorOptions.Underscore, new[] { 3, 10 })] // XXX_XXXXXXX_XXX
 public partial struct CustomerId { }
 ```
 
