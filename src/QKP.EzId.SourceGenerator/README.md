@@ -46,10 +46,10 @@ public partial struct CustomerId { }
 3. Create generators and use the implementations:
 ```csharp
 // Create generators with unique IDs for each type
-var orderGenerator = new EzIdGenerator<OrderId>(generatorId: 1);
-var productGenerator = new EzIdGenerator<ProductId>(generatorId: 2);
-var userGenerator = new EzIdGenerator<UserId>(generatorId: 3);
-var customerGenerator = new EzIdGenerator<CustomerId>(generatorId: 4);
+var orderGenerator = new CompactEzIdGenerator<OrderId>(generatorId: 1);
+var productGenerator = new CompactEzIdGenerator<ProductId>(generatorId: 2);
+var userGenerator = new CompactEzIdGenerator<UserId>(generatorId: 3);
+var customerGenerator = new CompactEzIdGenerator<CustomerId>(generatorId: 4);
 
 // Generate IDs
 var orderId = orderGenerator.GetNextId();         // "070-47XF6Q8-YPA"
@@ -66,7 +66,7 @@ bool invalid = orderId == productId;                      // Won't compile - dif
 ```
 
 ## Generated Features
-- Generator support via EzIdGenerator<T>
+- Generator support via CompactEzIdGenerator<T>
 - Parse() and TryParse() methods
 - ToString() with configured separators
 - Equality operators and comparisons

@@ -6,7 +6,7 @@ internal static partial class Templates
     /// <summary>
     /// Gets the IdTypeImplemenationTemplate.
     /// </summary>
-    public static string IdTypeImplementationTemplate =>
+    public static string CompactEzIdTypeImplementationTemplate =>
         """
         using System;
         using QKP.EzId;
@@ -23,7 +23,7 @@ internal static partial class Templates
                 #endif
                     IEquatable<{TypeName}>,
                     IComparable<{TypeName}>,
-                    IEzIdType<{TypeName}>,
+                    ICompactEzId<{TypeName}>,
                     IConvertible
             {
                 /// <summary>
@@ -312,7 +312,7 @@ internal static partial class Templates
 
                 /// <inheritdoc />
                 public long ToInt64(IFormatProvider? provider) => throw new InvalidCastException();
-                
+
                 /// <inheritdoc />
                 public sbyte ToSByte(IFormatProvider? provider) => throw new InvalidCastException();
 

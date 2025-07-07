@@ -8,15 +8,15 @@ namespace QKP.EzId
     /// <typeparam name="T">
     /// The ID type, which must implement IEzIdType{T}.
     /// </typeparam>
-    public class EzIdGenerator<T> where T : IEzIdType<T>
+    public class CompactEzIdGenerator<T> where T : ICompactEzId<T>
     {
         private readonly IdGenerator _generator;
 
         /// <summary>
-        /// Constructs an instance of <see cref="EzIdGenerator{T}"/>.
+        /// Constructs an instance of <see cref="CompactEzIdGenerator{T}"/>.
         /// </summary>
         /// <param name="generatorId">A unique generator identifier that must be unique per concurrent process that can generate Ids.</param>
-        public EzIdGenerator(long generatorId)
+        public CompactEzIdGenerator(long generatorId)
         {
             _generator = new IdGenerator(generatorId);
         }

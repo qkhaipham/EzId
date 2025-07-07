@@ -28,7 +28,7 @@ public class EzIdJsonConverterTests
     [Fact]
     public void Given_ez_id_when_serializing_then_it_must_serialize_as_expected()
     {
-        EzId id = EzId.Parse("070-47XF6Q8-YPA");
+        CompactEzId id = CompactEzId.Parse("070-47XF6Q8-YPA");
         var person = new Person(id, "John Doe");
         string expectedJson = @"{""id"":""070-47XF6Q8-YPA"",""name"":""John Doe""}";
 
@@ -40,4 +40,4 @@ public class EzIdJsonConverterTests
     }
 }
 
-internal record Person(EzId Id, string Name);
+internal record Person(CompactEzId Id, string Name);

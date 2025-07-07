@@ -15,13 +15,13 @@ namespace QKP.EzId
     /// </example>
     /// </summary>
 
-    public readonly struct EzId :
+    public readonly struct CompactEzId :
 #if NET7_0_OR_GREATER
-        ISpanParsable<EzId>,
+        ISpanParsable<CompactEzId>,
 #endif
-        IEquatable<EzId>,
-        IComparable<EzId>,
-        IEzIdType<EzId>,
+        IEquatable<CompactEzId>,
+        IComparable<CompactEzId>,
+        ICompactEzId<CompactEzId>,
         IConvertible
     {
 
@@ -36,31 +36,31 @@ namespace QKP.EzId
         /// <summary>
         /// Gets a default error ID value.
         /// </summary>
-        public static readonly EzId ErrorId = new EzId(0);
+        public static readonly CompactEzId ErrorId = new CompactEzId(0);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EzId"/> struct.
+        /// Initializes a new instance of the <see cref="CompactEzId"/> struct.
         /// </summary>
         /// <param name="value">The 64-bit value.</param>
-        public EzId(long value)
+        public CompactEzId(long value)
         {
             Value = Format(Base32.Base32CrockFord.Encode(value));
         }
 
         /// <summary>
-        /// Parses a <see cref="string"/> value to an instance of <see cref="EzId"/>.
+        /// Parses a <see cref="string"/> value to an instance of <see cref="CompactEzId"/>.
         /// </summary>
         /// <param name="value">The <see cref="string"/> value to parse.</param>
-        /// <returns>The parsed <see cref="EzId"/> value.</returns>
-        public static EzId Parse(string value) => Parse(value, null);
+        /// <returns>The parsed <see cref="CompactEzId"/> value.</returns>
+        public static CompactEzId Parse(string value) => Parse(value, null);
 
         /// <summary>
-        /// Parses a <see cref="string"/> value to an instance of <see cref="EzId"/>.
+        /// Parses a <see cref="string"/> value to an instance of <see cref="CompactEzId"/>.
         /// </summary>
         /// <param name="s">The <see cref="string"/> value to parse.</param>
         /// <param name="provider">An object that provides culture-specific formatting information. This parameter is ignored.</param>
-        /// <returns>The parsed <see cref="EzId"/> value.</returns>
-        public static EzId Parse(string s, IFormatProvider? provider)
+        /// <returns>The parsed <see cref="CompactEzId"/> value.</returns>
+        public static CompactEzId Parse(string s, IFormatProvider? provider)
         {
             if (s.Length != s_length)
             {
@@ -77,28 +77,28 @@ namespace QKP.EzId
                 }
             }
 
-            return new EzId(Base32.Base32CrockFord.DecodeLong(encodedValue));
+            return new CompactEzId(Base32.Base32CrockFord.DecodeLong(encodedValue));
         }
 
         /// <summary>
-        /// Parses a <see cref="string"/> value to an instance of <see cref="EzId"/>.
+        /// Parses a <see cref="string"/> value to an instance of <see cref="CompactEzId"/>.
         /// </summary>
         /// <param name="value">The <see cref="string"/> value to parse.</param>
         /// <param name="result">When this method returns, contains the parsed value if successful, otherwise a default value.</param>
         /// <returns>true if parsing succeeded; otherwise, false.</returns>
-        public static bool TryParse(string? value, out EzId result)
+        public static bool TryParse(string? value, out CompactEzId result)
         {
             return TryParse(value, null, out result);
         }
 
         /// <summary>
-        /// Parses a <see cref="string"/> value to an instance of <see cref="EzId"/>.
+        /// Parses a <see cref="string"/> value to an instance of <see cref="CompactEzId"/>.
         /// </summary>
         /// <param name="value">The <see cref="string"/> value to parse.</param>
         /// <param name="provider">An object that provides culture-specific formatting information. This parameter is ignored.</param>
         /// <param name="result">When this method returns, contains the parsed value if successful, otherwise a default value.</param>
         /// <returns>true if parsing succeeded; otherwise, false.</returns>
-        public static bool TryParse(string? value, IFormatProvider? provider, out EzId result)
+        public static bool TryParse(string? value, IFormatProvider? provider, out CompactEzId result)
         {
             try
             {
@@ -120,16 +120,16 @@ namespace QKP.EzId
         }
 
         /// <inheritdoc />
-        public int CompareTo(EzId other) => string.Compare(Value, other.Value, StringComparison.Ordinal);
+        public int CompareTo(CompactEzId other) => string.Compare(Value, other.Value, StringComparison.Ordinal);
 
         /// <inheritdoc />
         public override bool Equals(object? obj)
         {
-            return obj is EzId other && Equals(other);
+            return obj is CompactEzId other && Equals(other);
         }
 
         /// <inheritdoc />
-        public bool Equals(EzId other)
+        public bool Equals(CompactEzId other)
         {
             return Value == other.Value;
         }
@@ -146,7 +146,7 @@ namespace QKP.EzId
         /// <param name="left">The first EzId to compare.</param>
         /// <param name="right">The second EzId to compare.</param>
         /// <returns>true if the value of left is the same as the value of right; otherwise, false.</returns>
-        public static bool operator ==(EzId left, EzId right)
+        public static bool operator ==(CompactEzId left, CompactEzId right)
         {
             return left.Equals(right);
         }
@@ -157,7 +157,7 @@ namespace QKP.EzId
         /// <param name="left">The first EzId to compare.</param>
         /// <param name="right">The second EzId to compare.</param>
         /// <returns>true if the value of left is different from the value of right; otherwise, false.</returns>
-        public static bool operator !=(EzId left, EzId right)
+        public static bool operator !=(CompactEzId left, CompactEzId right)
         {
             return !left.Equals(right);
         }
@@ -169,7 +169,7 @@ namespace QKP.EzId
         /// <param name="left">The EzId to compare.</param>
         /// <param name="right">The null reference to compare.</param>
         /// <returns>Always false since an EzId value type can never equal null.</returns>
-        public static bool operator ==(EzId left, EzId? right)
+        public static bool operator ==(CompactEzId left, CompactEzId? right)
         {
             return right.HasValue && left.Equals(right.Value);
         }
@@ -180,7 +180,7 @@ namespace QKP.EzId
         /// <param name="left">The null reference to compare.</param>
         /// <param name="right">The EzId to compare.</param>
         /// <returns>Always true since an EzId value type can never equal null.</returns>
-        public static bool operator ==(EzId? left, EzId right)
+        public static bool operator ==(CompactEzId? left, CompactEzId right)
         {
             return left.HasValue && left.Value.Equals(right);
         }
@@ -191,7 +191,7 @@ namespace QKP.EzId
         /// <param name="left">The EzId to compare.</param>
         /// <param name="right">The null reference to compare.</param>
         /// <returns>Always true since an EzId value type can never equal null.</returns>
-        public static bool operator !=(EzId left, EzId? right)
+        public static bool operator !=(CompactEzId left, CompactEzId? right)
         {
             return !(left == right);
         }
@@ -202,7 +202,7 @@ namespace QKP.EzId
         /// <param name="left">The null reference to compare.</param>
         /// <param name="right">The EzId to compare.</param>
         /// <returns>Always true since an EzId value type can never equal null.</returns>
-        public static bool operator !=(EzId? left, EzId right)
+        public static bool operator !=(CompactEzId? left, CompactEzId right)
         {
             return !(left == right);
         }
@@ -213,7 +213,7 @@ namespace QKP.EzId
         /// <param name="left">The first nullable EzId to compare.</param>
         /// <param name="right">The second nullable EzId to compare.</param>
         /// <returns>true if both are null, or if both have values and those values are equal; otherwise, false.</returns>
-        public static bool operator ==(EzId? left, EzId? right) => Equals(left, right);
+        public static bool operator ==(CompactEzId? left, CompactEzId? right) => Equals(left, right);
 
         /// <summary>
         /// Determines whether two nullable EzId objects have different values.
@@ -221,11 +221,11 @@ namespace QKP.EzId
         /// <param name="left">The first nullable EzId to compare.</param>
         /// <param name="right">The second nullable EzId to compare.</param>
         /// <returns>true if one is null and the other is not, or if both have values and those values are not equal; otherwise, false.</returns>
-        public static bool operator !=(EzId? left, EzId? right) => !Equals(left, right);
+        public static bool operator !=(CompactEzId? left, CompactEzId? right) => !Equals(left, right);
         /// <summary>
         /// Determines whether one EzId is greater than another.
         /// </summary>
-        public static bool operator >(EzId left, EzId right)
+        public static bool operator >(CompactEzId left, CompactEzId right)
         {
             return left.CompareTo(right) > 0;
         }
@@ -233,7 +233,7 @@ namespace QKP.EzId
         /// <summary>
         /// Determines whether one EzId is less than another.
         /// </summary>
-        public static bool operator <(EzId left, EzId right)
+        public static bool operator <(CompactEzId left, CompactEzId right)
         {
             return left.CompareTo(right) < 0;
         }
@@ -241,7 +241,7 @@ namespace QKP.EzId
         /// <summary>
         /// Determines whether one EzId is greater than or equal to another.
         /// </summary>
-        public static bool operator >=(EzId left, EzId right)
+        public static bool operator >=(CompactEzId left, CompactEzId right)
         {
             return left.CompareTo(right) >= 0;
         }
@@ -249,7 +249,7 @@ namespace QKP.EzId
         /// <summary>
         /// Determines whether one EzId is less than or equal to another.
         /// </summary>
-        public static bool operator <=(EzId left, EzId right)
+        public static bool operator <=(CompactEzId left, CompactEzId right)
         {
             return left.CompareTo(right) <= 0;
         }
@@ -274,10 +274,10 @@ namespace QKP.EzId
 
 #if NET7_0_OR_GREATER
         /// <inheritdoc />
-        public static EzId Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s.ToString(), provider);
+        public static CompactEzId Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s.ToString(), provider);
 
         /// <inheritdoc />
-        public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out EzId result) =>
+        public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out CompactEzId result) =>
             TryParse(s.ToString(), out result);
 #endif
         /// <inheritdoc />
@@ -309,7 +309,7 @@ namespace QKP.EzId
 
         /// <inheritdoc />
         public long ToInt64(IFormatProvider? provider) => throw new InvalidCastException();
-        
+
         /// <inheritdoc />
         public sbyte ToSByte(IFormatProvider? provider) => throw new InvalidCastException();
 
@@ -326,7 +326,7 @@ namespace QKP.EzId
             switch (code)
             {
                 case TypeCode.Object:
-                    if (conversionType == typeof(object) || conversionType == typeof(EzId))
+                    if (conversionType == typeof(object) || conversionType == typeof(CompactEzId))
                     {
                         return this;
                     }

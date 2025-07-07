@@ -42,17 +42,17 @@ dotnet add package QKP.EzId.SourceGenerator
 ```csharp
 using QKP.EzId;
 
-// Create an EzIdGenerator with a unique generator ID (0-1023)
-var generator = new EzIdGenerator<EzId>(generatorId: 1);
+// Create a CompactEzIdGenerator with a unique generator ID (0-1023)
+var generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 1);
 
 // Generate a new ID
-EzId id = generator.GetNextId();
+CompactEzId id = generator.GetNextId();
 
 // Convert to string
 string idString = id.ToString(); // Returns a 15-character base32 string eg. "070-47XF6Q8-YPA"
 
 // Parse from string
-EzId parsedId = EzId.Parse(idString);
+CompactEzId parsedId = CompactEzId.Parse(idString);
 ```
 
 ### Source Generated ID Types
@@ -66,8 +66,8 @@ using QKP.EzId;
 [EzIdType] // Default: dash separators at positions [3, 10]
 public partial struct ProductId { }
 
-// Use it just like the base EzId
-var generator = new EzIdGenerator<ProductId>(generatorId: 1);
+// Use it just like the base CompactEzId
+var generator = new CompactEzIdGenerator<ProductId>(generatorId: 1);
 ProductId id = generator.GetNextId();
 string idString = id.ToString(); // Returns e.g. "070-47XF6Q8-YPA"
 ProductId parsedId = ProductId.Parse(idString);
@@ -126,8 +126,8 @@ For example:
 
 ```csharp
 // Example for distributed system
-var node1Generator = new EzIdGenerator<EzId>(generatorId: 1);  // For Node 1
-var node2Generator = new EzIdGenerator<EzId>(generatorId: 2);  // For Node 2
+var node1Generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 1);  // For Node 1
+var node2Generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 2);  // For Node 2
 ```
 
 ### ID Structure

@@ -9,7 +9,7 @@ public class CustomIdTests
     [Fact]
     public void Given_id_with_attribute_with_no_args_when_creating_then_it_must_have_default_formatting_rules()
     {
-        var idGenerator = new EzIdGenerator<DefaultFormattedEzId>(1);
+        var idGenerator = new CompactEzIdGenerator<DefaultFormattedCompactEzId>(1);
         var id = idGenerator.GetNextId();
 
         id.Value.Length.Should().Be(15);
@@ -20,7 +20,7 @@ public class CustomIdTests
     [Fact]
     public void Given_id_with_attribute_with_separator_value_and_positions_when_creating_then_it_must_have_correct_formatting_rules()
     {
-        var idGenerator = new EzIdGenerator<EzIdWithDash>(1);
+        var idGenerator = new CompactEzIdGenerator<CompactEzIdWithDash>(1);
         var id = idGenerator.GetNextId();
 
         id.Value.Length.Should().Be(15);
@@ -31,7 +31,7 @@ public class CustomIdTests
     [Fact]
     public void Given_id_with_attribute_with_no_separators_when_creating_then_it_must_have_no_separators()
     {
-        var idGenerator = new EzIdGenerator<EzIdWithNoSeparator>(1);
+        var idGenerator = new CompactEzIdGenerator<CompactEzIdWithNoSeparator>(1);
         var id = idGenerator.GetNextId();
 
         id.Value.Length.Should().Be(13);
@@ -40,7 +40,7 @@ public class CustomIdTests
     [Fact]
     public void Given_id_with_attribute_with_under_score_separator_when_creating_then_it_must_have_under_score_separators()
     {
-        var idGenerator = new EzIdGenerator<EzIdWithUnderscore>(1);
+        var idGenerator = new CompactEzIdGenerator<CompactEzIdWithUnderscore>(1);
         var id = idGenerator.GetNextId();
 
         id.Value.Length.Should().Be(15);
