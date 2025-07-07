@@ -146,15 +146,55 @@ namespace QKP.EzId.Tests
         }
 
         [Fact]
+        public void Given_two_ezids_when_comparing_with_greater_than_operator_it_should_return_expected_result()
+        {
+            var smaller = new EzId(100);
+            var larger = new EzId(200);
+
+            (larger > smaller).Should().BeTrue();
+            (smaller > larger).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Given_two_ezids_when_comparing_with_less_than_operator_it_should_return_expected_result()
+        {
+            var smaller = new EzId(100);
+            var larger = new EzId(200);
+
+            (smaller < larger).Should().BeTrue();
+            (larger < smaller).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Given_two_ezids_when_comparing_with_greater_than_or_equal_operator_it_should_return_expected_result()
+        {
+            var smaller = new EzId(100);
+            var larger = new EzId(200);
+
+            (larger >= smaller).Should().BeTrue();
+            (smaller >= larger).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Given_two_ezids_when_comparing_with_less_than_or_equal_operator_it_should_return_expected_result()
+        {
+            var smaller = new EzId(100);
+            var larger = new EzId(200);
+
+            (smaller <= larger).Should().BeTrue();
+            (larger <= smaller).Should().BeFalse();
+        }
+
+        [Fact]
         public void Given_ezid_when_comparing_with_itself_it_must_be_equal()
         {
             var ezId = new EzId(12345);
 
             ezId.Equals(ezId).Should().BeTrue();
-            // ReSharper disable once EqualExpressionComparison
+#pragma warning disable CS1718 // Comparison made to same variable
             (ezId == ezId).Should().BeTrue();
-            // ReSharper disable once EqualExpressionComparison
             (ezId != ezId).Should().BeFalse();
+#pragma warning restore CS1718 // Comparison made to same variable
         }
 
         [Fact]
