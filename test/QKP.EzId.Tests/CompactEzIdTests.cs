@@ -85,7 +85,7 @@ namespace QKP.EzId.Tests
             bool success = CompactEzId.TryParse(invalidInput, null, out var result);
 
             success.Should().BeFalse();
-            result.Should().Be(CompactEzId.ErrorId);
+            result.Should().Be(CompactEzId.Empty);
         }
 
         [Fact]

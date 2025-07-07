@@ -7,18 +7,18 @@ namespace QKP.EzId.Benchmarks;
 [MemoryDiagnoser]
 public class IdGeneratorBenchmarks
 {
-    private IdGenerator _idGenerator = null!;
+    private SnowflakeIdGenerator _snowflakeIdGenerator = null!;
 
     [GlobalSetup]
     public void Setup()
     {
-        _idGenerator = new IdGenerator(1);
+        _snowflakeIdGenerator = new SnowflakeIdGenerator(1);
     }
 
     [Benchmark]
     public long Generate_Single_Id()
     {
-        return _idGenerator.GetNextId();
+        return _snowflakeIdGenerator.GetNextId();
     }
 
     [Benchmark]
@@ -26,7 +26,7 @@ public class IdGeneratorBenchmarks
     {
         for (int i = 0; i < 1000; i++)
         {
-            _idGenerator.GetNextId();
+            _snowflakeIdGenerator.GetNextId();
         }
     }
 
@@ -35,7 +35,7 @@ public class IdGeneratorBenchmarks
     {
         for (int i = 0; i < 4096; i++)
         {
-            _idGenerator.GetNextId();
+            _snowflakeIdGenerator.GetNextId();
         }
     }
 
@@ -52,7 +52,7 @@ public class IdGeneratorBenchmarks
             {
                 for (int j = 0; j < idsPerThread; j++)
                 {
-                    _idGenerator.GetNextId();
+                    _snowflakeIdGenerator.GetNextId();
                 }
             });
         }

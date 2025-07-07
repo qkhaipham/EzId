@@ -1,21 +1,17 @@
-using System;
 using FluentAssertions;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QKP.EzId.Tests
 {
-    public class IdGeneratorTests
+    public class SnowflakeIdGeneratorTests
     {
-        private readonly IdGenerator _idGenerator = new(12);
+        private readonly SnowflakeIdGenerator _snowflakeIdGenerator = new(12);
 
         [Fact]
         public void When_generating_it_must_return_expected()
         {
             // Act
-            long id = _idGenerator.GetNextId();
+            long id = _snowflakeIdGenerator.GetNextId();
 
             // Assert
             id.Should().BeGreaterThan(0);
@@ -25,7 +21,7 @@ namespace QKP.EzId.Tests
         public void When_generating_multiple_ids_it_must_return_expected()
         {
             // Act
-            var ids = Enumerable.Range(0, 1000).Select(_ => _idGenerator.GetNextId()).ToList();
+            var ids = Enumerable.Range(0, 1000).Select(_ => _snowflakeIdGenerator.GetNextId()).ToList();
 
             // Assert
             ids.Should().NotBeEmpty();
@@ -38,7 +34,7 @@ namespace QKP.EzId.Tests
         public void When_generator_id_is_out_of_range_it_must_throw_exception(long generatorId)
         {
             // Act
-            Action act = () => new IdGenerator(generatorId);
+            Action act = () => new SnowflakeIdGenerator(generatorId);
 
             // Assert
             if (generatorId is < 1 or > 1024)
@@ -54,7 +50,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void When_generating_max_sequence_in_same_millisecond_it_must_handle_correctly()
         {
-            var idGenerator = new IdGenerator(1);
+            var idGenerator = new SnowflakeIdGenerator(1);
             var ids = new List<long>();
 
             // ACT
@@ -79,7 +75,7 @@ namespace QKP.EzId.Tests
         {
             const int numThreads = 4;
             const int idsPerThread = 100;
-            var idGenerator = new IdGenerator(1);
+            var idGenerator = new SnowflakeIdGenerator(1);
             var ids = new ConcurrentBag<long>();
             var tasks = new List<Task>();
 
@@ -105,7 +101,7 @@ namespace QKP.EzId.Tests
         public void When_generating_ids_then_bit_structure_must_be_correct()
         {
             const long generatorId = 123;
-            var idGenerator = new IdGenerator(generatorId);
+            var idGenerator = new SnowflakeIdGenerator(generatorId);
 
             // Act
             long id = idGenerator.GetNextId();
@@ -129,7 +125,7 @@ namespace QKP.EzId.Tests
             const int numGenerators = 4;
             const int idsPerGenerator = 1000;
             var generators = Enumerable.Range(0, numGenerators)
-                .Select(i => new IdGenerator(i))
+                .Select(i => new SnowflakeIdGenerator(i))
                 .ToList();
             var ids = new ConcurrentBag<long>();
 
@@ -152,11 +148,11 @@ namespace QKP.EzId.Tests
         {
             // Arrange
             var tickProvider = new StubTickProvider(1000);
-            var idGenerator = new IdGenerator(1, tickProvider);
-            
+            var idGenerator = new SnowflakeIdGenerator(1, tickProvider);
+
             // First call to establish last tick
             idGenerator.GetNextId();
-            
+
             // Simulate clock moving backwards
             tickProvider.SetTick(500);
 

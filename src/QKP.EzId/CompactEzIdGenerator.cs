@@ -6,11 +6,11 @@ namespace QKP.EzId
     /// Generates identifiers of type <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">
-    /// The ID type, which must implement IEzIdType{T}.
+    /// The ID type, which must implement <see cref="ICompactEzId{T}"/>.
     /// </typeparam>
     public class CompactEzIdGenerator<T> where T : ICompactEzId<T>
     {
-        private readonly IdGenerator _generator;
+        private readonly SnowflakeIdGenerator _generator;
 
         /// <summary>
         /// Constructs an instance of <see cref="CompactEzIdGenerator{T}"/>.
@@ -18,7 +18,7 @@ namespace QKP.EzId
         /// <param name="generatorId">A unique generator identifier that must be unique per concurrent process that can generate Ids.</param>
         public CompactEzIdGenerator(long generatorId)
         {
-            _generator = new IdGenerator(generatorId);
+            _generator = new SnowflakeIdGenerator(generatorId);
         }
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-#if NET7_0_OR_GREATER
-#endif
 
 namespace QKP.EzId
 {
@@ -14,7 +12,6 @@ namespace QKP.EzId
     /// 070-47XF6Q8-YPA
     /// </example>
     /// </summary>
-
     public readonly struct CompactEzId :
 #if NET7_0_OR_GREATER
         ISpanParsable<CompactEzId>,
@@ -24,7 +21,6 @@ namespace QKP.EzId
         ICompactEzId<CompactEzId>,
         IConvertible
     {
-
         /// <summary>
         /// Gets the base32 encoded string representation of the identifier.
         /// </summary>
@@ -34,9 +30,9 @@ namespace QKP.EzId
         private static readonly int[] s_separatorPositions = new[] { 3, 10 };
         private static readonly int s_length = 13 + s_separatorPositions.Length; // Base length (13) + number of separators
         /// <summary>
-        /// Gets a default error ID value.
+        /// Gets a default empty ID value.
         /// </summary>
-        public static readonly CompactEzId ErrorId = new CompactEzId(0);
+        public static readonly CompactEzId Empty = default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactEzId"/> struct.
@@ -106,7 +102,7 @@ namespace QKP.EzId
             }
             catch (ArgumentOutOfRangeException)
             {
-                result = ErrorId;
+                result = Empty;
                 return false;
             }
 

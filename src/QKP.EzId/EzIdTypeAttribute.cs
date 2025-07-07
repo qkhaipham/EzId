@@ -48,7 +48,6 @@ namespace QKP.EzId
 
             Separator = separator;
             SeparatorPositions = separatorPositions.Distinct().ToArray();
-
         }
     }
 
