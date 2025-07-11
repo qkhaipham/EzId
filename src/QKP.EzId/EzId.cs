@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
+using QKP.EzId.Json;
 
 namespace QKP.EzId
 {
@@ -15,6 +17,7 @@ namespace QKP.EzId
     /// 070AB-47XF6Q8NH0-YPA46
     /// </example>
     /// </summary>
+    [JsonConverter(typeof(EzIdJsonConverter))]
     public readonly struct EzId :
 #if NET7_0_OR_GREATER
         ISpanParsable<EzId>,
@@ -28,7 +31,7 @@ namespace QKP.EzId
         private readonly int _end;
 
         private static int s_sequence = new Random().Next();
-        private static readonly long s_generatorId = GetGeneratorId();
+        private static readonly long s_generatorId = GenerateRandomGeneratorId();
 
         private const char Separator = '-';
         private static readonly int[] s_separatorPositions = new[] { 5, 15 };
@@ -47,10 +50,13 @@ namespace QKP.EzId
                     sb.Append(Separator);
                     currentSeparatorIndex++;
                 }
+
                 sb.Append(encodedValue[i]);
             }
+
             return sb.ToString();
         }
+
         /// <summary>
         /// Gets a default empty ID value.
         /// </summary>
@@ -61,9 +67,13 @@ namespace QKP.EzId
         /// </summary>
         public string Value { get; }
 
-        private static int GetGeneratorId()
+        private static long GenerateRandomGeneratorId()
         {
-            return new Random().Next();
+            var random = new Random();
+            int high = random.Next();
+            int low = random.Next();
+            long combined = (long)((ulong)(uint)high << 32 | (uint)low);
+            return combined & 0xffffffffff; // get lowest 5 bytes
         }
 
         private EzId(int start, int mid, int end)
@@ -71,11 +81,11 @@ namespace QKP.EzId
             _start = start;
             _mid = mid;
             _end = end;
-            
+
             byte[] bytes = new byte[12];
             Buffer.BlockCopy(BitConverter.GetBytes(start), 0, bytes, 0, 4); // bytes 0-3
-            Buffer.BlockCopy(BitConverter.GetBytes(mid),   0, bytes, 4, 4); // bytes 4-7
-            Buffer.BlockCopy(BitConverter.GetBytes(end),   0, bytes, 8, 4); // bytes 8-11
+            Buffer.BlockCopy(BitConverter.GetBytes(mid), 0, bytes, 4, 4); // bytes 4-7
+            Buffer.BlockCopy(BitConverter.GetBytes(end), 0, bytes, 8, 4); // bytes 8-11
             Value = Format(Base32.Base32CrockFord.Encode(bytes));
         }
 
@@ -87,7 +97,8 @@ namespace QKP.EzId
         {
             int start = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             int mid = (int)s_generatorId >> 8; // get 32 highest bits
-            int sequence = Interlocked.Increment(ref s_sequence) & 0xFFFFFF; // mask 24 bits of 64 to get 40 bits for sequence
+            int sequence =
+                Interlocked.Increment(ref s_sequence) & 0xFFFFFF; // mask 24 bits of 64 to get 40 bits for sequence
             int end = (int)s_generatorId << 24 | sequence; // get highest 8 bits of generatorId and 24 bits of sequence
 
             return new EzId(start, mid, end);
@@ -111,7 +122,8 @@ namespace QKP.EzId
             if (s.Length != s_length)
             {
                 throw new ArgumentOutOfRangeException(nameof(s), $"Value must have a length equal to {s_length}.");
-            } 
+            }
+
             string encodedValue = s.Replace(Separator.ToString(), string.Empty);
 
             foreach (char c in encodedValue)
@@ -161,6 +173,7 @@ namespace QKP.EzId
                 result = Empty;
                 return false;
             }
+
             return true;
         }
 
@@ -298,6 +311,7 @@ namespace QKP.EzId
                 case TypeCode.String:
                     return ToString(provider);
             }
+
             throw new InvalidCastException();
         }
 

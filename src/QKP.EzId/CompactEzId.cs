@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
+using QKP.EzId.Json;
 
 namespace QKP.EzId
 {
@@ -12,6 +14,7 @@ namespace QKP.EzId
     /// 070-47XF6Q8-YPA
     /// </example>
     /// </summary>
+    [JsonConverter(typeof(CompactEzIdJsonConverter))]
     public readonly struct CompactEzId :
 #if NET7_0_OR_GREATER
         ISpanParsable<CompactEzId>,

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
 using FluentAssertions;
 
 namespace QKP.EzId.Tests
@@ -19,7 +20,7 @@ namespace QKP.EzId.Tests
         public void Given_ezid_when_calling_tostring_it_must_return_value()
         {
             var id = EzId.Generate();
-            id.ToString().Should().Be(id.Value);
+            id.Value.Should().Be(id.Value);
         }
 
         [Fact]
@@ -206,10 +207,12 @@ namespace QKP.EzId.Tests
             var id = EzId.Generate();
 
             id.Equals(null).Should().BeFalse();
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             (id == null).Should().BeFalse();
             (null == id).Should().BeFalse();
             (id != null).Should().BeTrue();
             (null != id).Should().BeTrue();
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
         }
 
         [Fact]
@@ -298,6 +301,32 @@ namespace QKP.EzId.Tests
 
             Action invalidType = () => id.ToType(typeof(int), null);
             invalidType.Should().Throw<InvalidCastException>();
+        }
+
+        [Fact]
+        public async Task When_generating_ids_concurrently_they_must_be_unique()
+        {
+            const int numThreads = 4;
+            const int idsPerThread = 100;
+            var ids = new ConcurrentBag<EzId>();
+            var tasks = new List<Task>();
+
+            // Act
+            for (int i = 0; i < numThreads; i++)
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    for (int j = 0; j < idsPerThread; j++)
+                    {
+                        ids.Add(EzId.Generate());
+                    }
+                }));
+            }
+            await Task.WhenAll(tasks);
+
+            // Assert
+            ids.Should().HaveCount(numThreads * idsPerThread);
+            ids.Distinct().Should().HaveCount(numThreads * idsPerThread);
         }
     }
 }

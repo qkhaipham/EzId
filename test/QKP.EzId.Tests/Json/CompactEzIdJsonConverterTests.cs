@@ -11,8 +11,7 @@ public class CompactEzIdJsonConverterTests
 
     private readonly JsonSerializerOptions _options = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        Converters = { new CompactEzIdJsonConverter() }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]

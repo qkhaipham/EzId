@@ -28,9 +28,9 @@ namespace QKP.EzId.SourceGenerator
         {
             string templateContent = templateName switch
             {
-                "IdTypeImplementation.cs.template" => Templates.CompactEzIdTypeImplementationTemplate,
-                "JsonConverterImplementation.cs.template" => Templates.JsonConverterImplementationTemplate,
-                "NewtonsoftJsonConverterImplementation.cs.template" => Templates.NewtonsoftJsonConverterImplementationTemplate,
+                nameof(Templates.EzIdImplementationTemplate) => Templates.EzIdImplementationTemplate,
+                nameof(Templates.CompactEzIdTypeImplementationTemplate) => Templates.CompactEzIdTypeImplementationTemplate,
+                nameof(Templates.JsonConverterImplementationTemplate) => Templates.JsonConverterImplementationTemplate,
                 _ => throw new InvalidOperationException($"Unknown template: {templateName}")
             };
 

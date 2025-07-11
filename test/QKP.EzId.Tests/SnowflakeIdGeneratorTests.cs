@@ -164,14 +164,9 @@ namespace QKP.EzId.Tests
         }
     }
 
-    internal class StubTickProvider : ITickProvider
+    internal class StubTickProvider(long initialTick) : ITickProvider
     {
-        private long _currentTick;
-
-        public StubTickProvider(long initialTick)
-        {
-            _currentTick = initialTick;
-        }
+        private long _currentTick = initialTick;
 
         public void SetTick(long tick)
         {

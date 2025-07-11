@@ -5,11 +5,10 @@ namespace QKP.EzId.SourceGenerator.Tests
 {
     public class TemplateProcessorTests
     {
-
         [Fact]
         public void Given_template_with_placeholders_when_processing_then_it_must_replace_placeholders()
         {
-            var processor = TemplateProcessor.LoadTemplate("IdTypeImplementation.cs.template");
+            var processor = TemplateProcessor.LoadTemplate(nameof(Templates.CompactEzIdTypeImplementationTemplate));
             var replacements = new Dictionary<string, string>
             {
                 ["Namespace"] = "TestNamespace",
@@ -31,9 +30,8 @@ namespace QKP.EzId.SourceGenerator.Tests
         }
 
         [Theory]
-        [InlineData("IdTypeImplementation.cs.template")]
-        [InlineData("JsonConverterImplementation.cs.template")]
-        [InlineData("NewtonsoftJsonConverterImplementation.cs.template")]
+        [InlineData(nameof(Templates.CompactEzIdTypeImplementationTemplate))]
+        [InlineData(nameof(Templates.JsonConverterImplementationTemplate))]
         public void Given_valid_template_when_loading_template_then_it_must_load_processor(string template)
         {
             // Act
