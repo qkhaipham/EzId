@@ -91,7 +91,7 @@ internal static partial class Templates
                 /// <summary>
                 /// Creates an instance of <see cref="{TypeName}"/>.
                 /// </summary>
-                public static {TypeName} Generate()
+                public static {TypeName} GetNextId()
                 {
                     int start = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     int mid = (int)s_generatorId >> 8;

@@ -50,7 +50,7 @@ public partial struct UserId { }
 
 3. Use the source-generated implementations:
 ```csharp
-var productId = ProductId.Generate();
+var productId = ProductId.GetNextId();
 string productId = id.ToString(); // eg. "070AB-47XF6Q8NH0-YPA40"
 SessionId parsedProductId = ProductId.Parse(productId);
 

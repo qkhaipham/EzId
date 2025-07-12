@@ -56,7 +56,7 @@ dotnet add package QKP.EzId.SourceGenerator
 ```csharp
 using QKP.EzId;
 
-EzId id = EzId.Generate();
+EzId id = EzId.GetNextId();
 string idString = id.ToString(); // e.g. "070AB-47XF6Q8NH0-YPA40"
 EzId parsedId = EzId.Parse(idString);
 ```
@@ -126,7 +126,7 @@ public partial struct UserId { }
 #### Usage
 
 ```csharp
-var productId = ProductId.Generate();
+var productId = ProductId.GetNextId();
 string productId = id.ToString(); // eg. "070AB-47XF6Q8NH0-YPA40"
 SessionId parsedProductId = ProductId.Parse(productId);
 

@@ -93,7 +93,7 @@ namespace QKP.EzId
         /// Creates an instance of <see cref="EzId"/>.
         /// </summary>
         /// <returns>An instance of <see cref="EzId"/>.</returns>
-        public static EzId Generate()
+        public static EzId GetNextId()
         {
             int start = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             int mid = (int)s_generatorId >> 8; // get 32 highest bits

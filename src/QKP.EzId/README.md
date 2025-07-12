@@ -35,7 +35,7 @@ dotnet add package QKP.EzId.SourceGenerator
 ```csharp
 using QKP.EzId;
 
-EzId id = EzId.Generate();
+EzId id = EzId.GetNextId();
 string idString = id.ToString(); // e.g. "070AB-47XF6Q8NH0-YPA40"
 EzId parsedId = EzId.Parse(idString);
 ```

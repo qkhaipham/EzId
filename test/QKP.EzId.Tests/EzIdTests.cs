@@ -9,8 +9,8 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_two_generated_ezids_when_comparing_they_must_not_be_equal()
         {
-            var id1 = EzId.Generate();
-            var id2 = EzId.Generate();
+            var id1 = EzId.GetNextId();
+            var id2 = EzId.GetNextId();
             id1.Should().NotBe(id2);
             id1.Value.Should().NotBeNullOrWhiteSpace();
             id2.Value.Should().NotBeNullOrWhiteSpace();
@@ -19,14 +19,14 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_calling_tostring_it_must_return_value()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             id.Value.Should().Be(id.Value);
         }
 
         [Fact]
         public void Given_ezid_when_parsing_and_tryparse_it_must_roundtrip()
         {
-            var original = EzId.Generate();
+            var original = EzId.GetNextId();
             var parsed = EzId.Parse(original.Value);
             parsed.Should().Be(original);
             parsed.Value.Should().Be(original.Value);
@@ -65,9 +65,9 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_two_ezids_with_same_value_when_comparing_they_must_be_equal_and_operators_work()
         {
-            var id1 = EzId.Generate();
+            var id1 = EzId.GetNextId();
             var id2 = EzId.Parse(id1.Value);
-            var id3 = EzId.Generate();
+            var id3 = EzId.GetNextId();
 
             id1.Should().Be(id2);
             id1.Equals(id2).Should().BeTrue();
@@ -79,8 +79,8 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_two_ezids_when_comparing_with_compareto_and_operators_they_should_match()
         {
-            var id1 = EzId.Generate();
-            var id2 = EzId.Generate();
+            var id1 = EzId.GetNextId();
+            var id2 = EzId.GetNextId();
             if (id1.Value == id2.Value) return; // extremely rare, skip
             (id1.CompareTo(id2) == 0).Should().Be(id1 == id2);
             (id1 < id2).Should().Be(id1.CompareTo(id2) < 0);
@@ -92,7 +92,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_and_null_or_different_type_when_comparing_they_must_not_be_equal()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             id.Equals(null).Should().BeFalse();
             id.Equals("string").Should().BeFalse();
         }
@@ -100,14 +100,14 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_getting_typecode_it_must_return_object()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             id.GetTypeCode().Should().Be(TypeCode.Object);
         }
 
         [Fact]
         public void Given_ezid_when_casting_to_type_valid_and_invalid_casts_should_behave_correctly()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             id.ToType(typeof(string), null).Should().Be(id.Value);
             id.ToType(typeof(EzId), null).Should().Be(id);
             id.ToType(typeof(object), null).Should().Be(id);
@@ -118,7 +118,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_casting_to_iconvertible_invalid_casts_throw()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             Action boolCast = () => id.ToBoolean(null);
             Action byteCast = () => id.ToByte(null);
             Action charCast = () => id.ToChar(null);
@@ -152,7 +152,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_converting_to_string_and_parsing_back_it_must_return_equivalent_ezid()
         {
-            var originalEzId = EzId.Generate();
+            var originalEzId = EzId.GetNextId();
             string strVal = originalEzId.ToString(CultureInfo.InvariantCulture);
 
             var parsedEzId = EzId.Parse(strVal);
@@ -164,7 +164,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_valid_string_when_using_tryparse_it_must_return_true_and_correct_ezid()
         {
-            var originalEzId = EzId.Generate();
+            var originalEzId = EzId.GetNextId();
             string strVal = originalEzId.ToString(CultureInfo.InvariantCulture);
 
             bool success = EzId.TryParse(strVal, out var parsedEzId);
@@ -176,7 +176,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_two_ezids_with_same_value_when_comparing_they_must_be_equal()
         {
-            var id1 = EzId.Generate();
+            var id1 = EzId.GetNextId();
             var id2 = EzId.Parse(id1.Value);
 
             id1.Should().Be(id2);
@@ -189,8 +189,8 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_two_ezids_with_different_values_when_comparing_they_must_not_be_equal()
         {
-            var id1 = EzId.Generate();
-            var id2 = EzId.Generate();
+            var id1 = EzId.GetNextId();
+            var id2 = EzId.GetNextId();
 
             // Extremely rare, but skip if they are equal
             if (id1 == id2) return;
@@ -204,7 +204,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_and_null_when_comparing_they_must_not_be_equal()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
 
             id.Equals(null).Should().BeFalse();
 #pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
@@ -228,7 +228,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_and_different_type_when_comparing_they_must_not_be_equal()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
             var differentType = "string";
 
             id.Equals(differentType).Should().BeFalse();
@@ -279,7 +279,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_comparing_with_itself_it_must_be_equal()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
 
             id.Equals(id).Should().BeTrue();
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -291,7 +291,7 @@ namespace QKP.EzId.Tests
         [Fact]
         public void Given_ezid_when_casting_to_iconvertible_valid_casts_succeed()
         {
-            var id = EzId.Generate();
+            var id = EzId.GetNextId();
 
             id.GetTypeCode().Should().Be(TypeCode.Object);
             id.ToString(null).Should().Be(id.ToString(CultureInfo.InvariantCulture));
@@ -318,7 +318,7 @@ namespace QKP.EzId.Tests
                 {
                     for (int j = 0; j < idsPerThread; j++)
                     {
-                        ids.Add(EzId.Generate());
+                        ids.Add(EzId.GetNextId());
                     }
                 }));
             }
