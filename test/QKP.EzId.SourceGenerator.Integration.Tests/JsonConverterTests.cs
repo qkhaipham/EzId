@@ -1,16 +1,18 @@
 using System.Globalization;
 using System.Text.Json;
 using FluentAssertions;
+using QKP.EzId.CustomTypes;
+using Xunit;
 
-namespace QKP.EzId.Tests.Json;
+namespace QKP.EzId.Integration.Tests;
 
-public class EzIdJsonConverterTests
+public class JsonConverterTests
 {
-    private record Person(EzId Id, string Name);
+    private record Person(DefaultFormattedCompactEzId Id, string Name);
 
     private readonly JsonSerializerOptions _options = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
@@ -29,7 +31,7 @@ public class EzIdJsonConverterTests
     [Fact]
     public void Given_ez_id_when_serializing_then_it_must_serialize_as_expected()
     {
-        EzId id = EzId.Parse("070XB-47XF6Q8FXG-69YP0");
+        DefaultFormattedCompactEzId id = DefaultFormattedCompactEzId.Parse("070XB-47XF6Q8FXG-69YP0");
         var person = new Person(id, "John Doe");
         string expectedJson = @"{""id"":""070XB-47XF6Q8FXG-69YP0"",""name"":""John Doe""}";
 
@@ -40,5 +42,3 @@ public class EzIdJsonConverterTests
         result.Should().Be(expectedJson);
     }
 }
-
-

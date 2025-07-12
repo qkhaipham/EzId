@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QKP.EzId.SourceGenerator", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QKP.EzId.SourceGenerator.Tests", "test\QKP.EzId.SourceGenerator.Tests\QKP.EzId.SourceGenerator.Tests.csproj", "{B9F3D7C5-D9E4-4F0E-B8B5-F3C2E8C6B7A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QKP.EzId.Integration.Tests", "test\QKP.EzId.Integration.Tests\QKP.EzId.Integration.Tests.csproj", "{86389D8E-1575-42E0-BC3F-3D401C8421CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QKP.EzId.SourceGenerator.Integration.Tests", "test\QKP.EzId.SourceGenerator.Integration.Tests\QKP.EzId.SourceGenerator.Integration.Tests.csproj", "{86389D8E-1575-42E0-BC3F-3D401C8421CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QKP.EzId.Benchmarks", "test\QKP.EzId.Benchmarks\QKP.EzId.Benchmarks.csproj", "{3CF55C95-5DF6-4AC4-89E5-810BE6E9B47F}"
 EndProject

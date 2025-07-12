@@ -109,11 +109,6 @@ namespace QKP.EzId
                 }
             }
 
-            if (bits > 0)
-            {
-                bytes.Add((byte)((val << (8 - bits)) & 0xFF));
-            }
-
             return bytes.ToArray();
         }
     }

@@ -13,8 +13,7 @@ Source generator companion for [EzId](https://github.com/qkhaipham/ezid) that pr
 - Type-safe equality and comparison operations
 - Built-in JSON serialization support
 - String parsing and formatting
-- Zero runtime reflection
-- Configurable separator formats
+- Configurable ID Format ( bitSize and separators)
 
 ## Usage
 
@@ -26,57 +25,47 @@ dotnet add package QKP.EzId.SourceGenerator
 
 2. Define your ID types:
 ```csharp
-// Default format with dash separators at positions [3, 10]: XXX-XXXXXXX-XXX
-[EzIdType]
-public partial struct OrderId { }
+using QKP.EzId;
 
-// Custom separator positions
-[EzIdType(SeparatorOptions.Dash, new[] { 4, 8 })] // XXXX-XXXX-XXXXXXX
+// Default: 96-bit, dash separators at positions [5, 15]
+// eg. XXXXX-XXXXXXXXXX-XXXXX
+[EzIdType]
 public partial struct ProductId { }
 
-// No separators
-[EzIdType(SeparatorOptions.None)]
-public partial struct UserId { } // XXXXXXXXXXXXXX
+// Custom: 96-bit, dash separators at positions [2, 18]
+// eg. XX-XXXXXXXXXXXXXXXX-XX
+[EzIdType(IdBitSize.Bits96, SeparatorOptions.Dash, [2, 18])]
+public partial struct PriceId { }
 
-// Underscore separators
-[EzIdType(SeparatorOptions.Underscore, new[] { 3, 10 })] // XXX_XXXXXXX_XXX
-public partial struct CustomerId { }
+// Custom 64-bit, underscore separators at positions [3, 10]
+// eg. XXX_XXXXXXX_XXX
+[EzIdType(IdBitSize.Bits64, SeparatorOptions.Underscore, [3, 10])]
+public partial struct SessionId { }
+
+// Custom 64-bit, no separators (64-bit)
+// eg. XXXXXXXXXXXXX
+[EzIdType(IdBitSize.Bits64, SeparatorOptions.None, [])]
+public partial struct UserId { }
 ```
 
-3. Create generators and use the implementations:
+3. Use the source-generated implementations:
 ```csharp
-// Create generators with unique IDs for each type
-var orderGenerator = new EzIdGenerator<OrderId>(generatorId: 1);
-var productGenerator = new EzIdGenerator<ProductId>(generatorId: 2);
-var userGenerator = new EzIdGenerator<UserId>(generatorId: 3);
-var customerGenerator = new EzIdGenerator<CustomerId>(generatorId: 4);
+var productId = ProductId.GetNextId();
+string productId = id.ToString(); // eg. "070AB-47XF6Q8NH0-YPA40"
+SessionId parsedProductId = ProductId.Parse(productId);
 
-// Generate IDs
-var orderId = orderGenerator.GetNextId();         // "070-47XF6Q8-YPA"
-var productId = productGenerator.GetNextId();     // "0704-7XF6-Q8YPA"
-var userId = userGenerator.GetNextId();           // "07047XF6Q8YPA"
-var customerId = customerGenerator.GetNextId();   // "070_47XF6Q8_YPA"
-
-// Parse from string (must match configured format)
-var parsed = OrderId.Parse("070-47XF6Q8-YPA");
-
-// Type-safe comparisons
-bool areEqual = orderId == orderGenerator.GetNextId();    // false
-bool invalid = orderId == productId;                      // Won't compile - different types!
+var generator = new CompactEzIdGenerator<SessionId>(generatorId: 1);
+SessionId sessionId = generator.GetNextId(); 
+string sessionIdString = id.ToString(); // eg. "070_47XF6Q8_YP0"
+SessionId parsedSessionId = SessionId.Parse(sessionIdString);
 ```
 
 ## Generated Features
-- Generator support via EzIdGenerator<T>
+- Generator support via CompactEzIdGenerator<T>
 - Parse() and TryParse() methods
 - ToString() with configured separators
 - Equality operators and comparisons
 - JSON serialization support
-- Implicit conversion from underlying EzId
-
-## Important Notes
-- Each generator instance must have a unique generatorId (0-1023)
-- Generator instances should be reused, not created per ID
-- Consider using dependency injection to manage generator instances
 
 ## Troubleshooting
 
@@ -85,4 +74,3 @@ If source generation isn't working:
 2. Type must be a struct marked with `[EzIdType]` attribute
 3. Type must be declared as `partial`
 4. Check build output for any generator diagnostics
-5. Verify separator positions are between 0 and 12 when using separators

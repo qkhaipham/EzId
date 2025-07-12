@@ -10,6 +10,11 @@ namespace QKP.EzId
     public class EzIdTypeAttribute : Attribute
     {
         /// <summary>
+        /// Gets or sets the bit size for the ID.
+        /// </summary>
+        public IdBitSize BitSize { get; set; } = IdBitSize.Bits96;
+
+        /// <summary>
         /// Gets or sets the separator character used in the ID string representation.
         /// </summary>
         public SeparatorOptions Separator { get; set; } = SeparatorOptions.Dash;
@@ -17,7 +22,7 @@ namespace QKP.EzId
         /// <summary>
         /// Gets or sets the separator positions.
         /// </summary>
-        public int[] SeparatorPositions { get; set; } = { 3, 10};
+        public int[] SeparatorPositions { get; set; } = { 5, 15 };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EzIdTypeAttribute"/> class.
@@ -29,27 +34,30 @@ namespace QKP.EzId
         /// <summary>
         /// Initializes an instance of the <see cref="EzIdTypeAttribute"/> class.
         /// </summary>
+        /// <param name="bitSize">The bit size of the generated ID without separators.</param>
         /// <param name="separator">The separator.</param>
         /// <param name="separatorPositions">The separator positions</param>
-        public EzIdTypeAttribute(SeparatorOptions separator, int[] separatorPositions)
+        public EzIdTypeAttribute(IdBitSize bitSize, SeparatorOptions separator, int[] separatorPositions)
         {
-            if (separator == SeparatorOptions.None && separatorPositions.Any())
-            {
-                throw new ArgumentException($"Invalid separator positions for separator {separator}", nameof(separatorPositions));
-            }
-
-            if (separator != SeparatorOptions.None)
-            {
-                if (!separatorPositions.All(x => x >= 0 && x <= 12))
-                {
-                    throw new ArgumentException($"Invalid separator positions for separator {separator}, separator positions must be a number between 0 and 12", nameof(separatorPositions));
-                }
-            }
-
+            BitSize = bitSize;
             Separator = separator;
             SeparatorPositions = separatorPositions.Distinct().ToArray();
-
         }
+    }
+
+    /// <summary>
+    /// Enumeration representing the different types of separators that can be used in the ID string representation.
+    /// </summary>
+    public enum IdBitSize
+    {
+        /// <summary>
+        /// 96 bits for the ID without separators.
+        /// </summary>
+        Bits96 = 96,
+        /// <summary>
+        /// 64 bits for the ID without separators.
+        /// </summary>
+        Bits64 = 64
     }
 
     /// <summary>

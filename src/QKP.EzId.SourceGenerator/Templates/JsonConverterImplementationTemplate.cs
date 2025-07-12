@@ -4,7 +4,6 @@ internal static partial class Templates
 {
     public static string JsonConverterImplementationTemplate =>
         """
-        #if NET5_0_OR_GREATER
         using System;
         using System.Text.Json;
         using System.Text.Json.Serialization;
@@ -16,7 +15,7 @@ internal static partial class Templates
             /// <summary>
             /// Json converter for <see cref="{Namespace}.{TypeName}"/> to read and write into a primitive <see cref="string"/>.
             /// </summary>
-            [JsonConverter(typeof({TypeName}JsonConverter))]
+
             public class {TypeName}JsonConverter : JsonConverter<{Namespace}.{TypeName}>
             {
                 /// <inheritdoc />
@@ -37,7 +36,6 @@ internal static partial class Templates
                 }
             }
         }
-        #endif
 
         """;
 }

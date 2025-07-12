@@ -1,52 +1,103 @@
 namespace QKP.EzId.SourceGenerator;
 
-
 internal static partial class Templates
 {
     /// <summary>
-    /// Gets the IdTypeImplemenationTemplate.
+    /// Gets the EzIdTypeImplementationTemplate ( 96 bits ).
     /// </summary>
-    public static string IdTypeImplementationTemplate =>
-        """
+    public static string EzIdImplementationTemplate =>
+    """
         using System;
         using QKP.EzId;
+        using System.Linq;
         using System.Text;
+        using System.Text.Json.Serialization;
+        using {Namespace}.Json;
 
         #nullable enable
 
         namespace {Namespace}
         {
             [System.Diagnostics.DebuggerDisplay("{Value}")]
+            [JsonConverter(typeof({TypeName}JsonConverter))]
             public readonly partial struct {TypeName} :
-                #if NET7_0_OR_GREATER
-                    ISpanParsable<{TypeName}>,
-                #endif
-                    IEquatable<{TypeName}>,
-                    IComparable<{TypeName}>,
-                    IEzIdType<{TypeName}>,
-                    IConvertible
+        #if NET7_0_OR_GREATER
+                ISpanParsable<{TypeName}>,
+        #endif
+                IEquatable<{TypeName}>,
+                IComparable<{TypeName}>,
+                IConvertible
             {
-                /// <summary>
-                /// Gets the base32 encoded string representation of the identifier.
-                /// </summary>
-                public string Value { get; }
+                private readonly int _start;
+                private readonly int _mid;
+                private readonly int _end;
+
+                private static int s_sequence = new Random().Next();
+                private static readonly long s_generatorId = GenerateRandomGeneratorId();
 
                 private const char Separator = '{Separator}';
                 private static readonly int[] s_separatorPositions = {SeparatorPositions}
                 private static readonly int s_length = {Length};
 
-                /// <summary>
-                /// Gets a default error ID value.
-                /// </summary>
-                public static readonly {TypeName} ErrorId = new {TypeName}(0);
+                private static string Format(string encodedValue)
+                {
+                    var sb = new StringBuilder();
+                    int currentSeparatorIndex = 0;
+                    for (int i = 0; i < encodedValue.Length; i++)
+                    {
+                        if (currentSeparatorIndex < s_separatorPositions.Length &&
+                            i == s_separatorPositions[currentSeparatorIndex])
+                        {
+                            sb.Append(Separator);
+                            currentSeparatorIndex++;
+                        }
+                        sb.Append(encodedValue[i]);
+                    }
+                    return sb.ToString();
+                }
 
                 /// <summary>
-                /// Initializes a new instance of the <see cref="{TypeName}"/> struct.
+                /// Gets a default empty ID value.
                 /// </summary>
-                /// <param name="value">The 64-bit value.</param>
-                public {TypeName}(long value)
+                public static readonly {TypeName} Empty = default;
+
+                /// <summary>
+                /// Gets the string value of <see cref="{TypeName}"/>.
+                /// </summary>
+                public string Value { get; }
+
+                private static long GenerateRandomGeneratorId()
                 {
-                    Value = Format(QKP.EzId.Base32.Base32CrockFord.Encode(value));
+                    var random = new Random();
+                    int high = random.Next();
+                    int low = random.Next();
+                    long combined = (long)((ulong)(uint)high << 32 | (uint)low);
+                    return combined & 0xffffffffff; // get lowest 5 bytes
+                }
+
+                private {TypeName}(int start, int mid, int end)
+                {
+                    _start = start;
+                    _mid = mid;
+                    _end = end;
+
+                    byte[] bytes = new byte[12];
+                    Buffer.BlockCopy(BitConverter.GetBytes(start), 0, bytes, 0, 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(mid),   0, bytes, 4, 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(end),   0, bytes, 8, 4);
+                    Value = Format(Base32.Base32CrockFord.Encode(bytes));
+                }
+
+                /// <summary>
+                /// Creates an instance of <see cref="{TypeName}"/>.
+                /// </summary>
+                public static {TypeName} GetNextId()
+                {
+                    int start = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    int mid = (int)s_generatorId >> 8;
+                    int sequence = System.Threading.Interlocked.Increment(ref s_sequence) & 0xFFFFFF;
+                    int end = (int)s_generatorId << 24 | sequence;
+                    return new {TypeName}(start, mid, end);
                 }
 
                 /// <summary>
@@ -70,16 +121,22 @@ internal static partial class Templates
                     }
 
                     string encodedValue = s.Replace(Separator.ToString(), string.Empty);
-
                     foreach (char c in encodedValue)
                     {
                         if (!Base32.Base32CrockFord.Alphabet.Characters.Contains(c))
-                        {
                             throw new ArgumentOutOfRangeException(nameof(s), $"Value contains illegal character '{c}'.");
-                        }
                     }
 
-                    return new {TypeName}(QKP.EzId.Base32.Base32CrockFord.DecodeLong(encodedValue));
+                    byte[] bytes = Base32.Base32CrockFord.Decode(encodedValue);
+                    if (bytes.Length != 12)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(s), "Decoded byte array must be 12 bytes.");
+                    }
+
+                    int start = BitConverter.ToInt32(bytes, 0);
+                    int mid = BitConverter.ToInt32(bytes, 4);
+                    int end = BitConverter.ToInt32(bytes, 8);
+                    return new {TypeName}(start, mid, end);
                 }
 
                 /// <summary>
@@ -88,18 +145,15 @@ internal static partial class Templates
                 /// <param name="value">The <see cref="string"/> value to parse.</param>
                 /// <param name="result">When this method returns, contains the parsed value if successful, otherwise a default value.</param>
                 /// <returns>true if parsing succeeded; otherwise, false.</returns>
-                public static bool TryParse(string? value, out {TypeName} result)
-                {
-                    return TryParse(value, null, out result);
-                }
+                public static bool TryParse(string? value, out {TypeName} result) => TryParse(value, null, out result);
 
                 /// <summary>
-                /// Parses a <see cref="string"/> value to an instance of <see cref="{TypeName}"/>.
-                /// </summary>
-                /// <param name="value">The <see cref="string"/> value to parse.</param>
-                /// <param name="provider">An object that provides culture-specific formatting information. This parameter is ignored.</param>
-                /// <param name="result">When this method returns, contains the parsed value if successful, otherwise a default value.</param>
-                /// <returns>true if parsing succeeded; otherwise, false.</returns>
+               /// Parses a <see cref="string"/> value to an instance of <see cref="{TypeName}"/>.
+               /// </summary>
+               /// <param name="value">The <see cref="string"/> value to parse.</param>
+               /// <param name="provider">An object that provides culture-specific formatting information. This parameter is ignored.</param>
+               /// <param name="result">When this method returns, contains the parsed value if successful, otherwise a default value.</param>
+               /// <returns>true if parsing succeeded; otherwise, false.</returns>
                 public static bool TryParse(string? value, IFormatProvider? provider, out {TypeName} result)
                 {
                     try
@@ -108,39 +162,35 @@ internal static partial class Templates
                     }
                     catch (ArgumentOutOfRangeException)
                     {
-                        result = ErrorId;
+                        result = Empty;
                         return false;
                     }
-
                     return true;
                 }
 
+        #if NET7_0_OR_GREATER
                 /// <inheritdoc />
-                public override string ToString()
-                {
-                    return Value;
-                }
+                public static {TypeName} Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s.ToString(), provider);
+
+                /// <inheritdoc />
+                public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out {TypeName} result) =>
+                    TryParse(s.ToString(), provider, out result);
+        #endif
+
+                /// <inheritdoc />
+                public override string ToString() => Value;
 
                 /// <inheritdoc />
                 public int CompareTo({TypeName} other) => string.Compare(Value, other.Value, StringComparison.Ordinal);
 
                 /// <inheritdoc />
-                public override bool Equals(object? obj)
-                {
-                    return obj is {TypeName} other && Equals(other);
-                }
+                public override bool Equals(object? obj) => obj is {TypeName} other && Equals(other);
 
                 /// <inheritdoc />
-                public bool Equals({TypeName} other)
-                {
-                    return Value == other.Value;
-                }
+                public bool Equals({TypeName} other) => Value == other.Value;
 
                 /// <inheritdoc />
-                public override int GetHashCode()
-                {
-                    return Value.GetHashCode();
-                }
+                public override int GetHashCode() => Value.GetHashCode();
 
                 /// <summary>
                 /// Determines whether two specified {TypeName} objects have the same value.
@@ -256,33 +306,6 @@ internal static partial class Templates
                     return left.CompareTo(right) <= 0;
                 }
 
-                private static string Format(string encodedValue)
-                {
-                    var sb = new StringBuilder();
-                    int currentSeparatorIndex = 0;
-
-                    for (int i = 0; i < encodedValue.Length; i++)
-                    {
-                        if (currentSeparatorIndex < s_separatorPositions.Length &&
-                            i == s_separatorPositions[currentSeparatorIndex])
-                        {
-                            sb.Append(Separator);
-                            currentSeparatorIndex++;
-                        }
-                        sb.Append(encodedValue[i]);
-                    }
-                    return sb.ToString();
-                }
-
-        #if NET7_0_OR_GREATER
-                /// <inheritdoc />
-                public static {TypeName} Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Parse(s.ToString(), provider);
-
-                /// <inheritdoc />
-                public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out {TypeName} result) =>
-                    TryParse(s.ToString(), out result);
-        #endif
-
                 /// <inheritdoc />
                 public TypeCode GetTypeCode() => TypeCode.Object;
 
@@ -312,7 +335,7 @@ internal static partial class Templates
 
                 /// <inheritdoc />
                 public long ToInt64(IFormatProvider? provider) => throw new InvalidCastException();
-                
+
                 /// <inheritdoc />
                 public sbyte ToSByte(IFormatProvider? provider) => throw new InvalidCastException();
 
@@ -325,19 +348,17 @@ internal static partial class Templates
                 /// <inheritdoc />
                 public object ToType(Type conversionType, IFormatProvider? provider)
                 {
-                    var code = Type.GetTypeCode(conversionType);
-                    switch (code)
+                    switch (Type.GetTypeCode(conversionType))
                     {
                         case TypeCode.Object:
                             if (conversionType == typeof(object) || conversionType == typeof({TypeName}))
-                            {
                                 return this;
-                            }
                             break;
                         case TypeCode.String:
-                            return ToString(provider);
+                            if (conversionType == typeof(string))
+                                return ToString();
+                            break;
                     }
-
                     throw new InvalidCastException();
                 }
 
@@ -345,10 +366,10 @@ internal static partial class Templates
                 public ushort ToUInt16(IFormatProvider? provider) => throw new InvalidCastException();
 
                 /// <inheritdoc />
-                public uint ToUInt32(IFormatProvider? provider) => throw new NotImplementedException();
+                public uint ToUInt32(IFormatProvider? provider) => throw new InvalidCastException();
 
                 /// <inheritdoc />
-                public ulong ToUInt64(IFormatProvider? provider) => throw new NotImplementedException();
+                public ulong ToUInt64(IFormatProvider? provider) => throw new InvalidCastException();
             }
         }
         """;

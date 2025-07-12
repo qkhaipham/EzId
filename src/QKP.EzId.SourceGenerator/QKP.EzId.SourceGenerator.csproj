@@ -19,7 +19,7 @@
     <Description>
       Source generator for QKP.EzId that enables creation of custom ID types.
     </Description>
-    <PackageTags>id;generator;unique;sortable;snowflake;base32;crockford;source-generator</PackageTags>
+    <PackageTags>id;generator;unique;sortable;snowflake;base32;objectId;64bits;96bitscrockford;source-generator</PackageTags>
     <IncludeBuildOutput>true</IncludeBuildOutput>
   </PropertyGroup>
 

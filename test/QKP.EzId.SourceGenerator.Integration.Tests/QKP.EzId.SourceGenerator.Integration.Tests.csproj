@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>QKP.EzId.Integration.Tests</RootNamespace>
     </PropertyGroup>
 
   <ItemGroup>

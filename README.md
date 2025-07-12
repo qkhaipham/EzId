@@ -1,6 +1,20 @@
 # EzId
 
-EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers that look for example like: `070-47XF6Q8-YPB`. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake and comes packed with a readonly struct that encodes it in a 15-character base32 string.
+EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers (using Crockford Base32 encoding). It supports both 96-bit (inspired on MongoDB's ObjectID ) and 64-bit ID formats ( inspired by Twitter Snowflake ) and provides source generators for custom strongly-typed IDs with customization support for separators.
+
+Note:
+
+96-bit IDs: each process uses a randomly generator ID and a 24-bit sequence (random start incrementing per ID). This approach makes coordination unnecessary, with collision odds negligible across distributed systems.
+
+64-bit IDs: require manually assigning unique generator IDs (0–1023) for each concurrent process to avoid collisions. Each generator can emit up to 4,096 IDs per millisecond.
+
+Example IDs:
+- 96-bit: `070AB-47XF6Q8NH0-YPA46` (22 chars, dash separators)
+- 96-bit: `070AB_47XF6Q8NH0_YPA46` (22 chars, underscore separators)
+- 96-bit: `070AB47XF6Q8NH0YPA46` (20 chars, no separators)
+- 64-bit: `070-47XF6Q8-YPA` (15 chars, dash separators)
+- 64-bit: `070_47XF6Q8_YPA` (15 chars, underscore separators)
+- 64-bit: `07047XF6Q8YPA` (13 chars, no separators)
 
 ---
 
@@ -11,104 +25,58 @@ EzId is a lightweight .NET library for generating unique, sortable, and human-fr
 |                            |                                                                                                                                                                                                                                                      |
 |----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `QKP.EzId`                 | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.svg)](https://www.nuget.org/packages/QKP.EzId/)                                                 |
-| `QKP.EzId.SourceGenerator` | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId/) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId.SourceGenerator/) |
+| `QKP.EzId.SourceGenerator` | [![NuGet](https://img.shields.io/nuget/v/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId.SourceGenerator) [![NuGet](https://img.shields.io/nuget/dt/QKP.EzId.SourceGenerator.svg)](https://www.nuget.org/packages/QKP.EzId.SourceGenerator/) |
 
 ## Features
 
-- Generates unique 64-bit identifiers encoded in Crockford's base32 format
+- Generates unique 64-bit and 96-bit identifiers
+- Source generator for custom strongly-typed ID structs
 - Thread-safe ID generation
-- Supports up to 1024 concurrent generators
-- Generates up to 4096 unique IDs per millisecond per generator
 - IDs are sortable by creation time
-- Human-friendly readable format
+- Human-friendly readable format (ID's are encoded with Crockford Base32) with customizable separators
 
 ## Installation
 
-### Using .NET CLI
+Install the core library:
 
 ```bash
 dotnet add package QKP.EzId
 ```
 
-For source generation support (recommended):
+For source generator support (recommended for custom ID types):
+
 ```bash
 dotnet add package QKP.EzId.SourceGenerator
 ```
 
 ## Usage
 
-### Basic Usage
+### EzId ( 96-bit ID )
 
 ```csharp
 using QKP.EzId;
 
-// Create an EzIdGenerator with a unique generator ID (0-1023)
-var generator = new EzIdGenerator<EzId>(generatorId: 1);
-
-// Generate a new ID
-EzId id = generator.GetNextId();
-
-// Convert to string
-string idString = id.ToString(); // Returns a 15-character base32 string eg. "070-47XF6Q8-YPA"
-
-// Parse from string
+EzId id = EzId.GetNextId();
+string idString = id.ToString(); // e.g. "070AB-47XF6Q8NH0-YPA40"
 EzId parsedId = EzId.Parse(idString);
 ```
 
-### Source Generated ID Types
-
-You can create your own strongly-typed IDs using the source generator:
+### CompactEzId ( 64-bit ID )
 
 ```csharp
 using QKP.EzId;
 
-// Define a custom ID type
-[EzIdType] // Default: dash separators at positions [3, 10]
-public partial struct ProductId { }
+// Create a CompactEzIdGenerator with a unique generator ID (0-1023)
+var generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 1);
 
-// Use it just like the base EzId
-var generator = new EzIdGenerator<ProductId>(generatorId: 1);
-ProductId id = generator.GetNextId();
-string idString = id.ToString(); // Returns e.g. "070-47XF6Q8-YPA"
-ProductId parsedId = ProductId.Parse(idString);
-```
+// Generate a new ID
+CompactEzId id = generator.GetNextId();
 
-#### Customization Options
+// Convert to string
+string idString = id.ToString(); // e.g. "070-47XF6Q8-YP0"
 
-The `EzIdType` attribute supports the following options:
-
-- `Separator`: The type of separator to use (None, Dash, or Underscore)
-- `SeparatorPositions`: Array of positions where separators should appear (0-12)
-
-Examples:
-
-```csharp
-// Default format (XXX-XXXXXXX-XXX)
-[EzIdType]
-public partial struct OrderId { }
-
-// Custom separator positions (XXXX-XXXX-XXXXXXX)
-[EzIdType(SeparatorOptions.Dash, [4, 8])]
-public partial struct ProductId { }
-
-// No separators (XXXXXXXXXXXXXX)
-[EzIdType(SeparatorOptions.None, [])]
-public partial struct UserId { }
-
-// Underscore separators (XXX_XXXXXXX_XXX)
-[EzIdType(SeparatorOptions.Underscore, [3, 10])]
-public partial struct SessionId { }
-```
-
-#### JSON Serialization
-
-Source generated ID types automatically include JSON converters for System.Text.Json and Newtonsoft.Json:
-
-```csharp
-// System.Text.Json
-var product = new Product { Id = productId, Name = "Example" };
-string json = JsonSerializer.Serialize(product);
-var deserializedProduct = JsonSerializer.Deserialize<Product>(json);
+// Parse from string
+CompactEzId parsedId = CompactEzId.Parse(idString);
 ```
 
 ### Important: Generator ID
@@ -120,28 +88,114 @@ The `generatorId` parameter is crucial for preventing ID collisions across diffe
 - Different for each concurrent generator in your distributed system
 
 For example:
-- In a distributed system, use different generator IDs for each server/node
-- In a multi-threaded application, use different generator IDs for each thread
-- In a microservice architecture, assign unique generator IDs to each service instance
 
 ```csharp
 // Example for distributed system
-var node1Generator = new EzIdGenerator<EzId>(generatorId: 1);  // For Node 1
-var node2Generator = new EzIdGenerator<EzId>(generatorId: 2);  // For Node 2
+var node1Generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 1);  // For Node 1
+var node2Generator = new CompactEzIdGenerator<CompactEzId>(generatorId: 2);  // For Node 2
 ```
+
+### Source Generated Custom ID Types
+
+You can create your own strongly-typed IDs using the source generator. Annotate a partial struct with `[EzIdType]` or customize with constructor arguments:
+
+```csharp
+using QKP.EzId;
+
+// Default: 96-bit, dash separators at positions [5, 15]
+// eg. XXXXX-XXXXXXXXXX-XXXXX
+[EzIdType]
+public partial struct ProductId { }
+
+// Custom: 96-bit, dash separators at positions [2, 18]
+// eg. XX-XXXXXXXXXXXXXXXX-XX
+[EzIdType(IdBitSize.Bits96, SeparatorOptions.Dash, [2, 18])]
+public partial struct PriceId { }
+
+// Custom 64-bit, underscore separators at positions [3, 10]
+// eg. XXX_XXXXXXX_XXX
+[EzIdType(IdBitSize.Bits64, SeparatorOptions.Underscore, [3, 10])]
+public partial struct SessionId { }
+
+// Custom 64-bit, no separators (64-bit)
+// eg. XXXXXXXXXXXXX
+[EzIdType(IdBitSize.Bits64, SeparatorOptions.None, [])]
+public partial struct UserId { }
+```
+
+#### Usage
+
+```csharp
+var productId = ProductId.GetNextId();
+string productId = id.ToString(); // eg. "070AB-47XF6Q8NH0-YPA40"
+SessionId parsedProductId = ProductId.Parse(productId);
+
+var generator = new CompactEzIdGenerator<SessionId>(generatorId: 1);
+SessionId sessionId = generator.GetNextId(); 
+string sessionIdString = id.ToString(); // eg. "070_47XF6Q8_YP0"
+SessionId parsedSessionId = SessionId.Parse(sessionIdString);
+```
+
+#### JSON Serialization
+
+Source generated ID types automatically include JSON converters for System.Text.Json:
+
+```csharp
+// System.Text.Json
+var product = new Product { Id = productId, Name = "Example" };
+string json = JsonSerializer.Serialize(product);
+var deserializedProduct = JsonSerializer.Deserialize<Product>(json);
+```
+
+## Why EzId vs. GUID v4 and GUID v7
+
+EzId is tailored for scenarios demanding concise, sortable, and human-friendly identifiers, whereas GUIDs are general-purpose with fixed format and length. The table below highlights the key distinctions:
+
+| Feature            | EzId (96‑bit)                                                          | CompactEzId (64‑bit)                                               | GUID v4                                        | GUID v7                                                        |
+| ------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------- | -------------------------------------------------------------- |
+| **Readability**    | 22 chars ( 20 base32 characters + 2 separators)        | 15 chars ( 13 base32 characters + 2 separators )      | 36 chars (32 hex + 4 hyphens)                  | 36 chars (32 hex + 4 hyphens)                                  |
+| **Sortability**    | Embeds second precision timestamp: lexicographical/chronological order          | Embeds ms-precision timestamp: lexicographical/chronological order               | None (fully random)                            | Embeds ms-precision timestamp; lexicographical/chronological order |
+| **Throughput**     | Up to 16,777,216 IDs/sec per process                                   | 4,096 IDs/ms per generator (max 1,024 generators)                  | High, but no built-in coordination or sequence | High, but no built-in coordination or sequence                 |
+| **Collision Risk** | Negligible because of 40-bit random generatorId and 24-bit sequence across IDs | Negligible when generator IDs are unique and sequences initialized | Astronomically low (≈1 in 2¹²²; practically impossible)                                    | Astronomically low (≈1 in 2⁷⁴; practically impossible)                                                    |
+| **Storage**        | 96 bits raw; 22 chars encoded                                    | 64 bits raw; 15 chars encoded                                | 128 bits raw; 36 chars encoded                 | 128 bits raw; 36 chars encoded                                 |
+
+**Choosing the right ID**:\*\*:
+
+- Use **EzId** for high‑performance, human‑readable, and time‑sortable IDs in distributed systems.
+- Use **GUID v4** when you need a simple globally unique ID without ordering requirements.
+- Use **GUID v7** when you want a sortable UUID but can tolerate its longer, less readable format.
+
 
 ### ID Structure
 
-Each generated ID consists of:
+#### 96-bit ID (EzId and custom 96-bit types)
+- 32 bits: timestamp (seconds since UNIX epoch)
+- 40 bits: generator ID (random per process)
+- 24 bits: sequence (random start, increments per ID)
+
+##### ID Generation
+
+- Generate up to 16,777,216 IDs per second
+
+#### 64-bit ID (CompactEzId and custom 64-bit types)
 - 1 bit unused
 - 41 bits for timestamp (milliseconds since epoch)
 - 10 bits for generator ID (0-1023)
 - 12 bits for sequence number (0-4095)
 
-This structure ensures that:
-- IDs are sortable by creation time
-- Each generator can create up to 4096 unique IDs per millisecond
-- Up to 1024 generators can operate concurrently without collisions
+##### ID Generation
+
+- Supports up to 1024 concurrent generators
+- Generates up to 4096 unique IDs per millisecond per generator
+
+Both formats are sortable by creation time and support high concurrency.
+
+### Why Base32 (Crockford)
+
+Base32 (Crockford) is chosen for encoding IDs in EzId because it offers:
+
+- Compactness: reduces the character length compared to hexadecimal or Base64, making IDs shorter and more manageable.
+- Readability: omits visually similar characters (I, L, O, U), preventing misinterpretation in human transcription.
 
 ## Contributing
 

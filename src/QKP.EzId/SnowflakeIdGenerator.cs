@@ -11,7 +11,7 @@ namespace QKP.EzId
     /// The next 10 bits ( max 1024 unique generators ) are used to store the generatorId.
     /// And the last 12 bits ( max 4096 ) are used to store the sequence.
     /// </summary>
-    public class IdGenerator
+    public class SnowflakeIdGenerator
     {
         /// <summary>
         /// The generator identifier.
@@ -32,16 +32,15 @@ namespace QKP.EzId
         private long _lastTick;
 
         /// <summary>
-        /// Constructs an instance of <see cref="IdGenerator"/>.
+        /// Constructs an instance of <see cref="SnowflakeIdGenerator"/>.
         /// </summary>
         /// <param name="generatorId">The generator ID which must be a unique identifier for each concurrent processor.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the generator ID is out of range.</exception>
-        public IdGenerator(long generatorId) : this(generatorId, new StopwatchTickProvider())
+        public SnowflakeIdGenerator(long generatorId) : this(generatorId, new StopwatchTickProvider())
         {
         }
 
-
-        internal IdGenerator(long generatorId, ITickProvider tickProvider)
+        internal SnowflakeIdGenerator(long generatorId, ITickProvider tickProvider)
         {
             if (generatorId < 0 || generatorId > MaxGeneratorId)
             {

@@ -10,7 +10,7 @@ namespace QKP.EzId
     {
         private readonly Stopwatch _stopWatch;
         private readonly long _initializedTicksInMs;
-        private static readonly DateTimeOffset s_epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private static readonly DateTimeOffset s_epoch = DateTimeOffset.UnixEpoch;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StopwatchTickProvider"/> class.

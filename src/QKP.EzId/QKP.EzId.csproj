@@ -13,7 +13,7 @@
       EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake
       and comes packed with a value type that encodes it in a 13-character base32 string.
     </Description>
-    <PackageTags>id;generator;unique;sortable;snowflake;base32;crockford</PackageTags>
+    <PackageTags>id;generator;unique;sortable;snowflake;base32;objectid;64bits;96bits;crockford</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="System.Text.Json" Version="9.0.7" />
   </ItemGroup>
 
 </Project>

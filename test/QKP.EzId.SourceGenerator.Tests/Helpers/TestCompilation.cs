@@ -48,7 +48,7 @@ public class TestCompilation
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         // Create the generator
-        EzIdTypeGenerator generator = new();
+        EzIdSourceGenerator generator = new();
 
         return (compilation, generator);
     }

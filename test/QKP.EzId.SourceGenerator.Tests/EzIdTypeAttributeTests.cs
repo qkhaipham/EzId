@@ -10,18 +10,35 @@ namespace QKP.EzId.SourceGenerator.Tests
         {
             // Act
             var attribute = new EzIdTypeAttribute();
+
             // Assert
+            attribute.BitSize.Should().Be(IdBitSize.Bits96);
             attribute.Separator.Should().Be(SeparatorOptions.Dash);
+            attribute.SeparatorPositions.Should().BeEquivalentTo([5, 15]);
         }
 
         [Fact]
-        public void Given_constructor_with_parameters_when_creating_attribute_then_should_set_separator_and_positions()
+        public void Given_64_bits_size_and_separator_and_positions_when_creating_attribute_then_should_set_bit_size_and_separator_and_positions()
         {
             // Act
-            var attribute = new EzIdTypeAttribute(SeparatorOptions.Dash, [3, 10]);
+            var attribute = new EzIdTypeAttribute(IdBitSize.Bits64, SeparatorOptions.Dash, [3, 10]);
+
             // Assert
+            attribute.BitSize.Should().Be(IdBitSize.Bits64);
             attribute.Separator.Should().Be(SeparatorOptions.Dash);
             attribute.SeparatorPositions.Should().BeEquivalentTo([3, 10]);
+        }
+
+        [Fact]
+        public void Given_96_bits_size_and_separator_and_positions_when_creating_attribute_then_should_set_bit_size_and_separator_and_positions()
+        {
+            // Act
+            var attribute = new EzIdTypeAttribute(IdBitSize.Bits96, SeparatorOptions.Dash, [5, 15]);
+
+            // Assert
+            attribute.BitSize.Should().Be(IdBitSize.Bits96);
+            attribute.Separator.Should().Be(SeparatorOptions.Dash);
+            attribute.SeparatorPositions.Should().BeEquivalentTo([5, 15]);
         }
 
         [Fact]
