@@ -14,7 +14,7 @@ namespace QKP.EzId
     /// 5 bytes = ( 40 bits ) = generatorId, a random value generated once per process
     /// 3 bytes = ( 24 bits ) = sequence, starts at a random value and increments for each ID generated
     /// <example>
-    /// 070AB-47XF6Q8NH0-YPA46
+    /// 070AB-47XF6Q8NH0-YPA40
     /// </example>
     /// </summary>
     [JsonConverter(typeof(EzIdJsonConverter))]

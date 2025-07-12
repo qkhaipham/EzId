@@ -11,7 +11,7 @@ namespace QKP.EzId
     /// to produce human friendly readable identifiers.
     ///
     /// <example>
-    /// 070-47XF6Q8-YPA
+    /// 070-47XF6Q8-YP0
     /// </example>
     /// </summary>
     [JsonConverter(typeof(CompactEzIdJsonConverter))]
