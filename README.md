@@ -2,9 +2,7 @@
 
 EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers (using Crockford Base32 encoding). It supports both 96-bit (inspired on MongoDB's ObjectID ) and 64-bit ID formats ( inspired by Twitter Snowflake ) and provides source generators for custom strongly-typed IDs with customization support for separators.
 
-Note:
-
-96-bit IDs: each process uses a randomly generator ID and a 24-bit sequence (random start incrementing per ID). This approach makes coordination unnecessary, with collision odds negligible across distributed systems.
+96-bit IDs: each process uses a random generated 40-bit generatorID and a 24-bit sequence (random start incrementing per ID). This approach makes coordination unnecessary, with collision odds negligible across distributed systems.
 
 64-bit IDs: require manually assigning unique generator IDs (0–1023) for each concurrent process to avoid collisions. Each generator can emit up to 4,096 IDs per millisecond.
 

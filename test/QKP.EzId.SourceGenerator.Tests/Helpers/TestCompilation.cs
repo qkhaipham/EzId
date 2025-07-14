@@ -6,7 +6,7 @@ namespace QKP.EzId.SourceGenerator.Tests.Helpers;
 
 public class TestCompilation
 {
-    public static (Compilation, ISourceGenerator) CreateCompilation(string source)
+    public static (Compilation, IIncrementalGenerator) CreateCompilation(string source)
     {
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
@@ -48,7 +48,7 @@ public class TestCompilation
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         // Create the generator
-        EzIdSourceGenerator generator = new();
+        EzIdIncrementalSourceGenerator generator = new();
 
         return (compilation, generator);
     }

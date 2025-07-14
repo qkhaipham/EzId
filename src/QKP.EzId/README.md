@@ -2,20 +2,17 @@
 
 EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers (using Crockford Base32 encoding). It supports both 96-bit (inspired on MongoDB's ObjectID ) and 64-bit ID formats ( inspired by Twitter Snowflake ) and provides source generators for custom strongly-typed IDs with customization support for separators.
 
-Note:
-
-96-bit IDs: each process uses a randomly generator ID and a 24-bit sequence (random start incrementing per ID). This approach makes coordination unnecessary, with collision odds negligible across distributed systems.
+96-bit IDs: each process uses a random generated 40-bit generatorID and a 24-bit sequence (random start incrementing per ID). This approach makes coordination unnecessary, with collision odds negligible across distributed systems.
 
 64-bit IDs: require manually assigning unique generator IDs (0–1023) for each concurrent process to avoid collisions. Each generator can emit up to 4,096 IDs per millisecond.
 
-
 Example IDs:
-- 96-bit: `070AB-47XF6Q8NH0-YPA40` (22 chars, dash separators)
-- 96-bit: `070AB_47XF6Q8NH0_YPA40` (22 chars, underscore separators)
-- 96-bit: `070AB47XF6Q8NH0YPA40` (20 chars, no separators)
-- 64-bit: `070-47XF6Q8-YP0` (15 chars, dash separators)
-- 64-bit: `070_47XF6Q8_YP0` (15 chars, underscore separators)
-- 64-bit: `07047XF6Q8YP0` (13 chars, no separators)
+- 96-bit: `070AB-47XF6Q8NH0-YPA46` (22 chars, dash separators)
+- 96-bit: `070AB_47XF6Q8NH0_YPA46` (22 chars, underscore separators)
+- 96-bit: `070AB47XF6Q8NH0YPA46` (20 chars, no separators)
+- 64-bit: `070-47XF6Q8-YPA` (15 chars, dash separators)
+- 64-bit: `070_47XF6Q8_YPA` (15 chars, underscore separators)
+- 64-bit: `07047XF6Q8YPA` (13 chars, no separators)
 
 ## Installation
 

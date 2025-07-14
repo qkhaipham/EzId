@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>QKP.EzId.Integration.Tests</RootNamespace>
+        <RootNamespace>QKP.EzId.SourceGenerator.Integration.Tests</RootNamespace>
     </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +16,8 @@
   </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="../../src/QKP.EzId.SourceGenerator/QKP.EzId.SourceGenerator.csproj" />
       <ProjectReference Include="../../src/QKP.EzId/QKP.EzId.csproj" />
-      <ProjectReference Include="../QKP.EzId.CustomTypes/QKP.EzId.CustomTypes.csproj" />
+      <ProjectReference Include="../../src/QKP.EzId.SourceGenerator/QKP.EzId.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
 
 </Project>
