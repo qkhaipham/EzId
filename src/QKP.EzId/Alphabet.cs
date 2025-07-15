@@ -1,38 +1,37 @@
 using System.Collections.Generic;
 
-namespace QKP.EzId
+namespace QKP.EzId;
+
+/// <summary>
+/// Represents an alphabet of characters that can be used in an encoding.
+/// </summary>
+public class Alphabet
 {
     /// <summary>
-    /// Represents an alphabet of characters that can be used in an encoding.
+    /// An array of characters that can be used in this alphabet representation.
     /// </summary>
-    public class Alphabet
+    public char[] Characters { get; }
+
+    /// <summary>
+    /// A dictionary that holds the integer value of a character in the alphabet.
+    /// </summary>
+    public Dictionary<char, int> ReverseTable { get; } = new();
+
+    /// <summary>
+    /// Constructs an instance of <see cref="Alphabet"/>.
+    /// </summary>
+    /// <param name="alphabet">The alphabet where the characters should be presented in a <see cref="string"/>.</param>
+    public Alphabet(string alphabet)
     {
-        /// <summary>
-        /// An array of characters that can be used in this alphabet representation.
-        /// </summary>
-        public char[] Characters { get; }
+        Characters = alphabet.ToCharArray();
+        SetReverseTable();
+    }
 
-        /// <summary>
-        /// A dictionary that holds the integer value of a character in the alphabet.
-        /// </summary>
-        public Dictionary<char, int> ReverseTable { get; } = new Dictionary<char, int>();
-
-        /// <summary>
-        /// Constructs an instance of <see cref="Alphabet"/>.
-        /// </summary>
-        /// <param name="alphabet">The alphabet where the characters should be presented in a <see cref="string"/>.</param>
-        public Alphabet(string alphabet)
+    private void SetReverseTable()
+    {
+        for (int i = 0; i < Characters.Length; i++)
         {
-            Characters = alphabet.ToCharArray();
-            SetReverseTable();
-        }
-
-        private void SetReverseTable()
-        {
-            for (int i = 0; i < Characters.Length; i++)
-            {
-                ReverseTable.Add(Characters[i], i);
-            }
+            ReverseTable.Add(Characters[i], i);
         }
     }
 }

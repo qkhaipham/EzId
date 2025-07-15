@@ -7,9 +7,9 @@ EzId is a lightweight .NET library for generating unique, sortable, and human-fr
 64-bit IDs: require manually assigning unique generator IDs (0–1023) for each concurrent process to avoid collisions. Each generator can emit up to 4,096 IDs per millisecond.
 
 Example IDs:
-- 96-bit: `070AB-47XF6Q8NH0-YPA46` (22 chars, dash separators)
-- 96-bit: `070AB_47XF6Q8NH0_YPA46` (22 chars, underscore separators)
-- 96-bit: `070AB47XF6Q8NH0YPA46` (20 chars, no separators)
+- 96-bit: `070AB-47XF6Q8NH0-YPA40` (22 chars, dash separators)
+- 96-bit: `070AB_47XF6Q8NH0_YPA40` (22 chars, underscore separators)
+- 96-bit: `070AB47XF6Q8NH0YPA40` (20 chars, no separators)
 - 64-bit: `070-47XF6Q8-YPA` (15 chars, dash separators)
 - 64-bit: `070_47XF6Q8_YPA` (15 chars, underscore separators)
 - 64-bit: `07047XF6Q8YPA` (13 chars, no separators)

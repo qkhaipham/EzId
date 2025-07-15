@@ -5,7 +5,8 @@ Source generator companion for [EzId](https://github.com/qkhaipham/ezid) that pr
 ## Requirements
 
 - Main package: `QKP.EzId` (automatically included as a dependency)
-- .NET Standard 2.1 or higher
+- **.NET SDK 5.0+** 
+- **Roslyn 3.8+**
 
 ## Features
 
