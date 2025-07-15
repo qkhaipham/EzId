@@ -68,7 +68,12 @@ internal static partial class Templates
 
                 private static long GenerateRandomGeneratorId()
                 {
-                    var random = new Random();
+        #if NETFRAMEWORK
+                int seed = (int)DateTime.UtcNow.Ticks ^ (Environment.MachineName.GetHashCode() & 0x00ffffff) ^ (short)Environment.ProcessId;
+                var random = new Random(seed);
+        #else
+                var random = new Random();
+        #endif
                     int high = random.Next();
                     int low = random.Next();
                     long combined = (long)((ulong)(uint)high << 32 | (uint)low);

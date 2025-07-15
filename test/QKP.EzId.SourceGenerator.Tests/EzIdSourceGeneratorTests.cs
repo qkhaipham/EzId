@@ -105,7 +105,8 @@ namespace QKP.EzId.SourceGenerator.Tests
         }
 
         [Fact]
-        public void Given_id_type_with_separator_positions_out_of_range_when_generating_then_it_should_throw_and_not_generate_files()
+        public void
+            Given_bits_96_id_type_with_separator_positions_out_of_range_when_generating_then_it_should_throw_and_not_generate_files()
         {
             var source = """
 
@@ -126,12 +127,41 @@ namespace QKP.EzId.SourceGenerator.Tests
             // Assert
             var diagnostic = result.Diagnostics.Should().ContainSingle().Which;
             diagnostic.Id.Should().Be("EZID001");
-            diagnostic.GetMessage().Should().Be("Error processing EzId type TestSeparatorId: Invalid separator positions for bitSize 96 and separator -, separator positions must be a number between 0 and 19 (Parameter 'separatorPositions')");
+            diagnostic.GetMessage().Should()
+                .Be(
+                    "Error processing EzId type TestSeparatorId: Invalid separator positions for bitSize 96 and separator -, separator positions must be a number between 0 and 19 (Parameter 'separatorPositions')");
             result.GetGeneratedOutput("TestSeparatorId.g.cs").Should().BeEmpty();
-    }
+        }
 
         [Fact]
-        public void Given_id_type_with_no_separator_and_separator_positions_when_generating_then_it_should_throw_and_not_generate_files()
+        public void Given_bits_64_id_type_with_separator_positions_out_of_range_when_generating_then_it_should_throw_and_not_generate_files()
+        {
+            var source = """
+
+                         using QKP.EzId;
+
+                         namespace TestNamespace
+                         {
+                             [EzIdType(IdBitSize.Bits64, SeparatorOptions.Dash, new int[] { -1, 13 })]
+                             public readonly partial struct TestSeparatorId
+                             {
+                             }
+                         }
+                         """;
+
+            // Act
+            var result = SourceGeneratorTestHelper.RunGenerator(source);
+
+            // Assert
+            var diagnostic = result.Diagnostics.Should().ContainSingle().Which;
+            diagnostic.Id.Should().Be("EZID001");
+            diagnostic.GetMessage().Should().Be("Error processing EzId type TestSeparatorId: Invalid separator positions for bitSize 64 and separator -, separator positions must be a number between 0 and 12 (Parameter 'separatorPositions')");
+            result.GetGeneratedOutput("TestSeparatorId.g.cs").Should().BeEmpty();
+        }
+
+        [Fact]
+        public void
+            Given_id_type_with_no_separator_and_separator_positions_when_generating_then_it_should_throw_and_not_generate_files()
         {
             var source = """
 
@@ -152,13 +182,14 @@ namespace QKP.EzId.SourceGenerator.Tests
             // Assert
             var diagnostic = result.Diagnostics.Should().ContainSingle().Which;
             diagnostic.Id.Should().Be("EZID001");
-            diagnostic.GetMessage().Should().Be("Error processing EzId type TestSeparatorId: Invalid separator positions for separator: none, pass in an empty int[]. (Parameter 'separatorPositions')");
+            diagnostic.GetMessage().Should()
+                .Be(
+                    "Error processing EzId type TestSeparatorId: Invalid separator positions for separator: none, pass in an empty int[]. (Parameter 'separatorPositions')");
             result.GetGeneratedOutput("TestSeparatorId.g.cs").Should().BeEmpty();
         }
 
 
-
-    [Fact]
+        [Fact]
         public void Given_id_type_when_generating_then_it_should_generate_json_converter()
         {
             var source = """
@@ -180,11 +211,13 @@ namespace QKP.EzId.SourceGenerator.Tests
             // Assert
             var systemJsonContent = result.GetGeneratedOutput("TestJsonIdJsonConverter.g.cs");
             systemJsonContent.Should().Contain("namespace TestNamespace.Json");
-            systemJsonContent.Should().Contain("public class TestJsonIdJsonConverter : JsonConverter<TestNamespace.TestJsonId>");
+            systemJsonContent.Should()
+                .Contain("public class TestJsonIdJsonConverter : JsonConverter<TestNamespace.TestJsonId>");
         }
 
         [Fact]
-        public void Given_multiple_id_types_when_generating_then_it_should_handle_multiple_id_types_in_same_compilation()
+        public void
+            Given_multiple_id_types_when_generating_then_it_should_handle_multiple_id_types_in_same_compilation()
         {
             var source = """
 

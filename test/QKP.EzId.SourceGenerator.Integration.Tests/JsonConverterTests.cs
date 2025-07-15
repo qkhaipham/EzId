@@ -1,10 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
 using FluentAssertions;
-using QKP.EzId.CustomTypes;
 using Xunit;
 
-namespace QKP.EzId.Integration.Tests;
+namespace QKP.EzId.SourceGenerator.Integration.Tests;
 
 public class JsonConverterTests
 {
