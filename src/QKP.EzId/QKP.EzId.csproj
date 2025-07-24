@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>QKP.EzId</PackageId>
     <AssemblyName>QKP.EzId</AssemblyName>
@@ -8,7 +6,6 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <PropertyGroup>
     <Description>
       EzId is a lightweight .NET library for generating unique, sortable, and human-friendly readable identifiers. It implements a 64 bit long ID generation algorithm inspired by Twitter Snowflake
@@ -16,17 +13,17 @@
     </Description>
     <PackageTags>id;generator;unique;sortable;snowflake;base32;objectid;64bits;96bits;crockford</PackageTags>
   </PropertyGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="QKP.EzId.Tests" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="9.0.7" />
   </ItemGroup>
-
+  <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0 and '$(IsCrossTargetingBuild)' == 'true'">
+    <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
+    <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory="../.." />
+  </Target>
 </Project>
