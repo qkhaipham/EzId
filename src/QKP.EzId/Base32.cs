@@ -110,5 +110,8 @@ public class Base32
         }
 
         return bytes.ToArray();
+
+
+
     }
 }
