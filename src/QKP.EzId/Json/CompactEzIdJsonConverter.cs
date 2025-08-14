@@ -17,7 +17,19 @@ public class CompactEzIdJsonConverter : JsonConverter<CompactEzId>
             throw new JsonException("Expected a string.");
         }
 
-        return CompactEzId.Parse(reader.GetString()!);
+        string? raw = reader.GetString();
+
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            throw new JsonException("CompactEzId cannot be empty.");
+        }
+
+        if (!CompactEzId.TryParse(raw, out var id))
+        {
+            throw new JsonException($"Invalid CompactEzId value: '{raw}'.");
+        }
+
+        return id;
     }
 
     /// <inheritdoc />

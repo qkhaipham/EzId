@@ -27,6 +27,19 @@ public class EzIdJsonConverterTests
     }
 
     [Fact]
+    public void Given_json_with_id_as_invalid_string_when_deserializing_then_it_must_throw_json_exception()
+    {
+        var json = @"{""id"":""invalid-id"",""name"":""John Doe""}";
+
+        // Act
+        Action act = () => JsonSerializer.Deserialize<Person>(json, _options);
+
+        // Assert
+        act.Should().Throw<JsonException>()
+            .WithMessage("Invalid EzId value: 'invalid-id'.");
+    }
+
+    [Fact]
     public void Given_ez_id_when_serializing_then_it_must_serialize_as_expected()
     {
         EzId id = EzId.Parse("070XB-47XF6Q8FXG-69YP0");
