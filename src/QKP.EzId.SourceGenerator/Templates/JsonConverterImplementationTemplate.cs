@@ -26,7 +26,19 @@ internal static partial class Templates
                         throw new JsonException("Expected a string.");
                     }
 
-                    return {Namespace}.{TypeName}.Parse(reader.GetString()!);
+                        string? raw = reader.GetString();
+
+                        if (string.IsNullOrWhiteSpace(raw))
+                        {
+                            throw new JsonException("EzId cannot be empty.");
+                        }
+
+                        if (!{Namespace}.{TypeName}.TryParse(raw, out var id))
+                        {
+                            throw new JsonException($"Invalid {TypeName} value: '{raw}'.");
+                        }
+
+                        return id;
                 }
 
                 /// <inheritdoc />

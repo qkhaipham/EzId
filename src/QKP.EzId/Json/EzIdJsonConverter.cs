@@ -17,7 +17,19 @@ public class EzIdJsonConverter : JsonConverter<EzId>
             throw new JsonException("Expected a string.");
         }
 
-        return EzId.Parse(reader.GetString()!);
+        string? raw = reader.GetString();
+
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            throw new JsonException("EzId cannot be empty.");
+        }
+
+        if (!EzId.TryParse(raw, out var id))
+        {
+            throw new JsonException($"Invalid EzId value: '{raw}'.");
+        }
+
+        return id;
     }
 
     /// <inheritdoc />
