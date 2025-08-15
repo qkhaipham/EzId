@@ -142,14 +142,17 @@ jobs:
           fetch-depth: 1
 
       # NuGet cache (.NET Framework Reference assemblies are needed for pack)
-      - name: Restore NuGet global package cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.targets','**/*.props','**/*.csproj') }} # Can't use packages.lock.json yet, because Dependabot does not support it.
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-          fail-on-cache-miss: true
+      # - name: Restore NuGet global package cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.nuget/packages
+      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.targets','**/*.props','**/*.csproj') }} # Can't use packages.lock.json yet, because Dependabot does not support it.
+      #     restore-keys: |
+      #       ${{ runner.os }}-nuget-
+      #     fail-on-cache-miss: true
+      
+      # Restore ( temp fix because restore doesn't cache doesn't seem to work.)
+      - run: dotnet restore
 
       # Restore build artifacts
       - name: Download build artifacts
